@@ -151,10 +151,10 @@ export function SearchForm() {
             type="submit"
             disabled={isBusy}
             className={clsx(
-              "rounded-xl md:rounded-2xl px-4 md:px-6 py-3 text-base md:text-lg font-semibold transition",
+              "rounded-xl md:rounded-2xl px-4 md:px-6 py-3 text-base md:text-lg font-semibold transition relative overflow-hidden",
               isBusy
                 ? "cursor-not-allowed bg-slate-700 text-slate-300"
-                : "bg-brand-primary/90 text-slate-900 hover:bg-brand-primary",
+                : "bg-brand-primary text-slate-900 shadow-glow hover:bg-brand-primary/90 hover:shadow-[0_0_45px_rgba(29,185,84,0.6)] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 animate-button-glow",
             )}
           >
             {isBusy && (

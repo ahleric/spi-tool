@@ -16,22 +16,34 @@ const config: Config = {
       },
       colors: {
         brand: {
-          primary: "#22d3ee",
-          secondary: "#818cf8",
-          accent: "#f472b6",
+          // Spotify-inspired green palette
+          primary: "#1DB954",
+          secondary: "#15803d",
+          accent: "#22c55e",
         },
       },
       boxShadow: {
-        glow: "0 0 40px rgba(34, 211, 238, 0.25)",
+        glow: "0 0 40px rgba(29, 185, 84, 0.28)",
       },
       keyframes: {
         fadeIn: {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
+        "button-glow": {
+          "0%, 100%": {
+            boxShadow: "0 0 24px rgba(29, 185, 84, 0.25)",
+            transform: "translateY(0)",
+          },
+          "50%": {
+            boxShadow: "0 0 40px rgba(29, 185, 84, 0.45)",
+            transform: "translateY(-1px)",
+          },
+        },
       },
       animation: {
         fadeIn: "fadeIn 200ms ease-out",
+        "button-glow": "button-glow 1800ms ease-in-out infinite",
       },
     },
   },

@@ -7,7 +7,7 @@ export default async function Home() {
   const locale = await getLocale();
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 md:gap-10 px-4 pb-24 pt-6 md:px-8 md:py-16">
+    <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 md:gap-10 px-4 pb-24 pt-10 md:px-8 md:py-16">
       <section className="space-y-4 md:space-y-6 text-center md:text-left">
         <p className="text-xs md:text-sm uppercase tracking-[0.4em] text-brand-primary">
           Spotify Popularity Intelligence
