@@ -2,6 +2,9 @@ import { Suspense } from "react";
 import { ensureOwnerFromEnv } from "@/lib/auth";
 import LoginForm from "./ui/LoginForm";
 
+// This page touches the database and must always be dynamic
+export const dynamic = "force-dynamic";
+
 export default async function AdminLoginPage() {
   await ensureOwnerFromEnv();
   return (

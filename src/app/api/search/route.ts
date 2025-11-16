@@ -6,6 +6,9 @@ import { recordEvent } from "@/lib/services/event";
 import { rateLimit } from "@/lib/rate-limit";
 import { env } from "@/lib/env";
 
+// This route depends on request headers and should always be dynamic
+export const dynamic = "force-dynamic";
+
 const querySchema = z.object({
   q: z.string().min(1, "请输入关键词或 Spotify 链接"),
 });

@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { getArtistIdFromInput } from "@/lib/spotify";
 
+// This route inspects request.url and should always be dynamic
+export const dynamic = "force-dynamic";
+
 function json(data: unknown, init?: number | ResponseInit) {
   const responseInit: ResponseInit = typeof init === "number" ? { status: init } : (init || {});
   const res = NextResponse.json(data, responseInit);
@@ -65,4 +68,3 @@ export async function GET(req: Request) {
     return json({ ok: false, status, error: message }, { status });
   }
 }
-
