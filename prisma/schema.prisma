@@ -1,0 +1,95 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Artist {
+  id         String                     @id
+  name       String
+  imageUrl   String?
+  popularity Int?
+  spi        Float?
+  followers  Int                        @default(0)
+  genres     String[]
+  spotifyUrl String?
+  createdAt  DateTime                   @default(now())
+  updatedAt  DateTime                   @updatedAt
+  snapshots  ArtistPopularitySnapshot[]
+  tracks     Track[]
+}
+
+model Track {
+  id         String                    @id
+  artistId   String
+  name       String
+  imageUrl   String?
+  popularity Int?
+  spi        Float?
+  album      String?
+  previewUrl String?
+  spotifyUrl String?
+  durationMs Int?
+  createdAt  DateTime                  @default(now())
+  updatedAt  DateTime                  @updatedAt
+  snapshots  TrackPopularitySnapshot[]
+  artist     Artist                    @relation(fields: [artistId], references: [id])
+
+  @@index([artistId])
+}
+
+model ArtistPopularitySnapshot {
+  id         String   @id @default(cuid())
+  artistId   String
+  popularity Int
+  takenAt    DateTime @default(now())
+  artist     Artist   @relation(fields: [artistId], references: [id])
+
+  // Application-layer deduplication handles same-day snapshots
+  @@index([artistId, takenAt])
+}
+
+model TrackPopularitySnapshot {
+  id         String   @id @default(cuid())
+  trackId    String
+  popularity Int
+  takenAt    DateTime @default(now())
+  track      Track    @relation(fields: [trackId], references: [id])
+
+  // Application-layer deduplication handles same-day snapshots
+  @@index([trackId, takenAt])
+}
+
+model EventLog {
+  id         String   @id @default(cuid())
+  type       String
+  artistId   String?
+  artistName String?
+  trackId    String?
+  trackName  String?
+  input      String?
+  userAgent  String?
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([artistId])
+  @@index([trackId])
+}
+
+/// Admin users for backend access control
+model AdminUser {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String?
+  role         String    @default("member") // 'owner' | 'member'
+  active       Boolean   @default(true)
+  passwordHash String
+  passwordSalt String
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
