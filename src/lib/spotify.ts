@@ -108,7 +108,7 @@ async function spotifyRequest<T>(
   config: AxiosRequestConfig = {},
   retry = true,
   attempt = 0,
-) {
+): Promise<T> {
   // Create a unique key for this request (path + method + key params)
   const requestKey = `${config.method || "GET"}:${path}:${JSON.stringify(config.params || {})}`;
   
