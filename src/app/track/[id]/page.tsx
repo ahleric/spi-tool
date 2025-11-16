@@ -51,7 +51,7 @@ export default async function TrackPage({ params, searchParams }: Props) {
         ← {backText}
       </Link>
 
-      <section className="glass rounded-2xl md:rounded-3xl border border-white/10 bg-slate-900/40 p-4 md:p-6 space-y-4">
+      <section className="glass rounded-2xl md:rounded-3xl border border-emerald-500/15 bg-neutral-900/50 p-4 md:p-6 space-y-4">
         <div className="flex flex-col md:flex-row gap-4 md:gap-6">
           {/* Album Cover */}
           {detail.track.imageUrl ? (
@@ -65,7 +65,7 @@ export default async function TrackPage({ params, searchParams }: Props) {
               />
             </div>
           ) : (
-            <div className="flex h-40 w-40 md:h-56 md:w-56 items-center justify-center rounded-2xl bg-slate-800 text-3xl md:text-4xl font-semibold text-slate-500 mx-auto md:mx-0">
+            <div className="flex h-40 w-40 md:h-56 md:w-56 items-center justify-center rounded-2xl bg-neutral-800 text-3xl md:text-4xl font-semibold text-slate-500 mx-auto md:mx-0">
               {detail.track.name.slice(0, 1)}
             </div>
           )}

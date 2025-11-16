@@ -18,6 +18,29 @@ export async function recordEvent(input: {
   userAgent?: string;
   ip?: string;
 }) {
+  // Lightweight deduplication to avoid accidental double-logging
+  // (e.g. double clicks or React hydration quirks)
+  const now = Date.now();
+  const recentWindowMs = 5_000;
+  const since = new Date(now - recentWindowMs);
+
+  const existing = await prisma.eventLog.findFirst({
+    where: {
+      type: input.type,
+      artistId: input.artistId ?? null,
+      trackId: input.trackId ?? null,
+      input: input.input ?? null,
+      userAgent: input.userAgent ?? null,
+      ip: input.ip ?? null,
+      createdAt: { gte: since },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  if (existing) {
+    return existing;
+  }
+
   return prisma.eventLog.create({
     data: {
       type: input.type,

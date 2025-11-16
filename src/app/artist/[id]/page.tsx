@@ -87,7 +87,7 @@ export default async function ArtistPage({ params, searchParams }: Props) {
         ← {t(locale, "backToHome")}
       </Link>
 
-      <section className="glass grid gap-6 md:gap-8 rounded-2xl md:rounded-3xl border border-white/10 bg-slate-900/40 p-4 md:p-6 md:grid-cols-[200px,1fr]">
+      <section className="glass grid gap-6 md:gap-8 rounded-2xl md:rounded-3xl border border-emerald-500/15 bg-neutral-900/50 p-4 md:p-6 md:grid-cols-[200px,1fr]">
         {detail.artist.imageUrl ? (
           <Image
             src={detail.artist.imageUrl}
@@ -97,7 +97,7 @@ export default async function ArtistPage({ params, searchParams }: Props) {
             className="h-32 w-32 md:h-48 md:w-48 rounded-2xl object-cover mx-auto md:mx-0"
           />
         ) : (
-          <div className="flex h-32 w-32 md:h-48 md:w-48 items-center justify-center rounded-2xl bg-slate-800 text-3xl md:text-4xl font-semibold text-slate-500 mx-auto md:mx-0">
+          <div className="flex h-32 w-32 md:h-48 md:w-48 items-center justify-center rounded-2xl bg-neutral-800 text-3xl md:text-4xl font-semibold text-slate-500 mx-auto md:mx-0">
             {detail.artist.name.slice(0, 1)}
           </div>
         )}
@@ -110,9 +110,16 @@ export default async function ArtistPage({ params, searchParams }: Props) {
               {detail.artist.name}
             </h1>
             {detail.artist.genres?.length ? (
-              <p className="text-xs md:text-sm text-slate-400 mt-1">
-                {detail.artist.genres.join(" / ")}
-              </p>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {detail.artist.genres.map((genre: string) => (
+                  <span
+                    key={genre}
+                    className="inline-flex items-center rounded-full border border-emerald-500/30 bg-neutral-900/80 px-2.5 py-0.5 text-[10px] md:text-xs font-medium text-emerald-200"
+                  >
+                    {genre}
+                  </span>
+                ))}
+              </div>
             ) : null}
           </div>
           <div className="grid gap-3 md:gap-4 grid-cols-2 md:grid-cols-2">

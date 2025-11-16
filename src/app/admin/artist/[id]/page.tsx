@@ -151,19 +151,19 @@ export default async function AdminArtistDetail({ params, searchParams }: Props)
 
 function ArtistFilterForm({ defaults, types }: { defaults?: { type?: string; from?: string; to?: string }; types?: string[] }) {
   return (
-    <form className="glass grid gap-4 rounded-3xl border border-white/10 bg-white/5 p-4 md:grid-cols-5">
+    <form className="glass grid gap-4 rounded-3xl border border-emerald-500/15 bg-neutral-900/60 p-4 md:grid-cols-5">
       <select
         name="type"
         defaultValue={defaults?.type || ""}
-        className="rounded-2xl border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-white outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/30"
+        className="rounded-2xl border border-white/10 bg-neutral-900/70 px-3 py-2 text-sm text-white outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/30"
       >
         <option value="">全部类型</option>
         {(types || []).map((t) => (
           <option key={t} value={t}>{t}</option>
         ))}
       </select>
-      <input type="date" name="from" defaultValue={defaults?.from} className="rounded-2xl border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-white outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/30" />
-      <input type="date" name="to" defaultValue={defaults?.to} className="rounded-2xl border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-white outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/30" />
+      <input type="date" name="from" defaultValue={defaults?.from} className="rounded-2xl border border-white/10 bg-neutral-900/70 px-3 py-2 text-sm text-white outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/30" />
+      <input type="date" name="to" defaultValue={defaults?.to} className="rounded-2xl border border-white/10 bg-neutral-900/70 px-3 py-2 text-sm text-white outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/30" />
       <button type="submit" className="rounded-2xl bg-brand-primary/90 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-brand-primary">筛选</button>
     </form>
   );

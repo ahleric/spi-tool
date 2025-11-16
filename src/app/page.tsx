@@ -22,7 +22,7 @@ export default async function Home() {
 
       <SearchForm />
       
-      <section className="glass w-full rounded-2xl md:rounded-3xl border border-white/10 bg-slate-900/60 p-4 md:p-6 space-y-2 md:space-y-3">
+      <section className="glass w-full rounded-2xl md:rounded-3xl border border-emerald-500/15 bg-neutral-900/60 p-4 md:p-6 space-y-2 md:space-y-3">
         <p className="text-xs md:text-sm uppercase tracking-[0.3em] text-slate-400">
           SPI Insight
         </p>

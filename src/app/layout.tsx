@@ -27,8 +27,8 @@ export default async function RootLayout({
       lang={locale === "zh" ? "zh-CN" : "en"}
       suppressHydrationWarning
     >
-      <body className={`${inter.variable} ${grotesk.variable} bg-slate-950 text-white antialiased`}>
-        <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-900">
+      <body className={`${inter.variable} ${grotesk.variable} bg-neutral-950 text-white antialiased`}>
+        <div className="min-h-screen bg-gradient-to-b from-neutral-950 via-neutral-950 to-neutral-950">
           <LocaleSwitcher />
           {children}
         </div>

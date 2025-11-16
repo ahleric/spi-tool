@@ -34,8 +34,8 @@ export function EventChart({ timeline }: Props) {
       {
         label: "Events per Day",
         data: values,
-        borderColor: "#22d3ee",
-        backgroundColor: "rgba(34, 211, 238, 0.15)",
+        borderColor: "#1DB954",
+        backgroundColor: "rgba(29, 185, 84, 0.16)",
         fill: true,
         tension: 0.4,
         pointRadius: 3,

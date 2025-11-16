@@ -8,7 +8,7 @@
 
 @layer base {
   body {
-    @apply bg-slate-950 text-slate-100;
+    @apply bg-neutral-950 text-slate-100;
     font-family: var(--font-inter), var(--font-grotesk), system-ui, -apple-system,
       BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
@@ -20,6 +20,6 @@
   }
 
   .glass {
-    @apply bg-white/5 backdrop-blur-lg border border-white/10 shadow-2xl shadow-slate-950/60;
+    @apply bg-neutral-900/70 backdrop-blur-lg border border-emerald-500/10 shadow-2xl shadow-black/70;
   }
 }

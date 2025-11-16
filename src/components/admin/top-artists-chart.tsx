@@ -33,7 +33,7 @@ export function TopArtistsChart({ artists }: Props) {
       {
         label: "查询次数",
         data: values,
-        backgroundColor: "rgba(34, 211, 238, 0.8)",
+        backgroundColor: "rgba(29, 185, 84, 0.85)",
       },
     ],
   };
@@ -74,5 +74,4 @@ export function TopArtistsChart({ artists }: Props) {
     </div>
   );
 }
-
 

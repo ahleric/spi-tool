@@ -11,7 +11,7 @@ export function EventTable({ events }: { events: EventLog[] }) {
   }
 
   return (
-    <div className="overflow-hidden rounded-3xl border border-white/10 bg-slate-900/50">
+    <div className="overflow-hidden rounded-3xl border border-emerald-500/15 bg-neutral-900/70">
       <table className="w-full text-left text-sm text-slate-200">
         <thead className="bg-white/5 text-xs uppercase tracking-widest text-slate-400">
           <tr>

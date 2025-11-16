@@ -9,8 +9,8 @@ export async function BrandCard() {
   const wechat = "ahleric";
 
   return (
-    <div className="glass relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900 to-slate-800 p-8">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(34,211,238,0.2),transparent)]" />
+    <div className="glass relative overflow-hidden rounded-3xl border border-emerald-500/15 bg-gradient-to-br from-neutral-950 to-neutral-900 p-8">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(29,185,84,0.22),transparent)]" />
       <div className="relative space-y-6">
         <div>
           <p className="text-sm uppercase tracking-[0.3em] text-brand-primary">
@@ -23,7 +23,7 @@ export async function BrandCard() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {email && (
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <div className="rounded-2xl border border-emerald-500/10 bg-neutral-900/80 p-4">
               <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-slate-400">
                 <span className="inline-flex h-4 w-4 items-center justify-center text-slate-400">
                   <svg
@@ -47,7 +47,7 @@ export async function BrandCard() {
             </div>
           )}
           {wechat && (
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <div className="rounded-2xl border border-emerald-500/10 bg-neutral-900/80 p-4">
               <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-slate-400">
                 <span className="inline-flex h-4 w-4 items-center justify-center text-slate-400">
                   <svg

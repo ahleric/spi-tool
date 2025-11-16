@@ -57,8 +57,8 @@ export function SpiChart({ points, title }: Props) {
       {
         label: locale === "zh" ? "流行指数" : "Popularity",
         data: points.map((point) => point.spi),
-        borderColor: "#22d3ee",
-        backgroundColor: "rgba(34, 211, 238, 0.15)",
+        borderColor: "#1DB954",
+        backgroundColor: "rgba(29, 185, 84, 0.16)",
         fill: true,
         tension: 0.4,
         pointRadius: 2,

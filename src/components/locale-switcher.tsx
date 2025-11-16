@@ -27,7 +27,7 @@ export function LocaleSwitcher() {
   };
 
   return (
-    <div className="fixed right-3 top-3 md:right-6 md:top-6 z-50 flex items-center gap-1 rounded-full border border-white/10 bg-slate-900/80 px-2 py-1 text-[10px] md:text-xs shadow-lg backdrop-blur">
+    <div className="fixed right-3 top-3 md:right-6 md:top-6 z-50 flex items-center gap-1 rounded-full border border-emerald-500/20 bg-neutral-900/90 px-2 py-1 text-[10px] md:text-xs shadow-lg backdrop-blur">
       <button
         type="button"
         onClick={() => handleChange("en")}
