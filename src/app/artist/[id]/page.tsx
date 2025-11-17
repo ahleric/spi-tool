@@ -81,7 +81,7 @@ export default async function ArtistPage({ params, searchParams }: Props) {
       <PageViewLogger
         type="artist_view"
         artistId={detail.artist.id}
-        artistName={detail.artist.name}
+        artistName={detail.artist.name === "Unknown Artist" ? undefined : detail.artist.name}
       />
       <Link href="/" className="text-sm text-slate-400 hover:text-white w-fit">
         ← {t(locale, "backToHome")}
