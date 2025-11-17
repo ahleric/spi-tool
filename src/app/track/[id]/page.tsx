@@ -2,11 +2,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTrackDetail } from "@/lib/services/track";
-import { SpiChart } from "@/components/charts/spi-chart";
 import { PageViewLogger } from "@/components/analytics/page-view-logger";
 import { OpenSpotifyButton } from "@/components/analytics/open-spotify-button";
 import { getLocale } from "@/lib/i18n-server";
 import { t } from "@/lib/i18n";
+import dynamic from "next/dynamic";
+
+const SpiChart = dynamic(
+  () =>
+    import("@/components/charts/spi-chart").then((mod) => mod.SpiChart),
+  { ssr: false }
+);
 
 type Props = {
   params: { id: string };

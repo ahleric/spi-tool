@@ -4,11 +4,17 @@ import { notFound } from "next/navigation";
 import { getArtistDetail } from "@/lib/services/artist";
 import { TrackTable } from "@/components/tables/track-table";
 import { Pagination } from "@/components/pagination/pagination";
-import { SpiChart } from "@/components/charts/spi-chart";
 import { PageViewLogger } from "@/components/analytics/page-view-logger";
 import { getLocale } from "@/lib/i18n-server";
 import { t } from "@/lib/i18n";
 import { ArtistSyncBanner } from "@/components/artist/artist-sync-banner";
+import dynamic from "next/dynamic";
+
+const SpiChart = dynamic(
+  () =>
+    import("@/components/charts/spi-chart").then((mod) => mod.SpiChart),
+  { ssr: false }
+);
 
 type Props = {
   params: { id: string };

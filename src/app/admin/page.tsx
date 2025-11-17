@@ -2,8 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { getEvents } from "@/lib/services/event";
 import { getEventMetrics } from "@/lib/services/event";
 import { EventTable } from "@/components/admin/event-table";
-import { EventChart } from "@/components/admin/event-chart";
-import { TopArtistsChart } from "@/components/admin/top-artists-chart";
+import dynamic from "next/dynamic";
 import { Pagination } from "@/components/pagination/pagination";
 import AdminActions from "./ui/AdminActions";
 import { getSession } from "@/lib/auth";
@@ -12,6 +11,20 @@ import { TopArtistsList } from "@/components/admin/top-artists-list";
 import { InterestScoreList } from "@/components/admin/interest-score";
 import { getInterestScores } from "@/lib/services/event";
 import { EventTypeBadge } from "@/components/admin/event-type-badge";
+
+const EventChart = dynamic(
+  () =>
+    import("@/components/admin/event-chart").then((mod) => mod.EventChart),
+  { ssr: false }
+);
+
+const TopArtistsChart = dynamic(
+  () =>
+    import("@/components/admin/top-artists-chart").then(
+      (mod) => mod.TopArtistsChart,
+    ),
+  { ssr: false }
+);
 
 type Props = {
   searchParams?: {

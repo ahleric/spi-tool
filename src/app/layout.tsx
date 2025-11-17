@@ -4,6 +4,7 @@ import "./globals.css";
 import { getLocale } from "@/lib/i18n-server";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const grotesk = Space_Grotesk({
@@ -34,6 +35,7 @@ export default async function RootLayout({
           {children}
         </div>
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
