@@ -95,7 +95,7 @@ export const translations = {
     subtitle: "输入 Spotify 链接或艺人名称，查看最新流行指数和历史走势。",
     searchLabel: "搜索艺人或歌曲",
     searchButtonText: "立即搜索",
-    brandTitle: "Next Stage — 音乐增长",
+    brandTitle: "Next Stage 音乐增长",
     brandSubtitle: "我们用数据策略，帮中国独立音乐人找到第一批精准的海外听众。",
     spiIntroTitle: "一分钟读懂SPI与Spotify算法机制",
     spiIntroSummary: "SPI 是 Spotify 决定要不要把你推给陌生听众的关键分数。分数越高，你越有机会被丢进 Discover Weekly、新歌雷达等官方歌单，比“总播放量”更直接决定你未来还能多红多久。",
