@@ -16,7 +16,7 @@ export async function BrandCard() {
           <p className="text-sm uppercase tracking-[0.3em] text-brand-primary">
             {title}
           </p>
-          <h2 className="text-3xl font-display font-semibold leading-tight text-white md:text-4xl">
+          <h2 className="text-2xl font-display font-semibold leading-snug text-white md:text-4xl md:leading-tight">
             {desc}
           </h2>
         </div>
