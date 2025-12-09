@@ -36,8 +36,9 @@ export async function getTrackDetail(trackId: string) {
 
     const [_, snapshots] = await Promise.all([artistPromise, snapshotsPromise]);
 
-    // If no snapshots exist, create one from current popularity (async, don't block)
-    if (snapshots.length === 0 && track.popularity !== null) {
+    // If today's snapshot is missing, create one (async, don't block)
+    const hasTodaySnapshot = snapshots.some((s) => isSameUtcDay(new Date(s.capturedAt), new Date()));
+    if (!hasTodaySnapshot && track.popularity !== null) {
       saveSnapshot({
         trackId: track.id,
         spotifyPopularity: track.popularity,
@@ -84,4 +85,12 @@ export async function getTrackDetail(trackId: string) {
       snapshots: [],
     };
   }
+}
+
+function isSameUtcDay(a: Date, b: Date) {
+  return (
+    a.getUTCFullYear() === b.getUTCFullYear() &&
+    a.getUTCMonth() === b.getUTCMonth() &&
+    a.getUTCDate() === b.getUTCDate()
+  );
 }
