@@ -7,10 +7,11 @@ import { Pagination } from "@/components/pagination/pagination";
 import AdminActions from "./ui/AdminActions";
 import { getSession } from "@/lib/auth";
 import { FunnelChart } from "@/components/admin/funnel-chart";
-import { TopArtistsList } from "@/components/admin/top-artists-list";
 import { InterestScoreList } from "@/components/admin/interest-score";
 import { getInterestScores } from "@/lib/services/event";
 import { EventTypeBadge } from "@/components/admin/event-type-badge";
+import { TopArtistsList } from "@/components/admin/top-artists-list";
+import { PerArtistFunnels } from "@/components/admin/per-artist-funnels";
 
 const EventChart = dynamic(
   () =>
@@ -73,25 +74,6 @@ export default async function AdminPage({ searchParams }: Props) {
   // Prepare type options for filter dropdown
   const typeOptions = allTypesMetrics.byType.map((t) => t.type).sort();
 
-  // Pick top artists and fetch per-artist funnel (limit 5)
-  const topFive = metrics.topArtists.slice(0, 5);
-  const perArtistFunnels = await Promise.all(
-    topFive.map(async (a) => {
-      const m = await getEventMetrics({ artistId: a.artistId });
-      const mMap = new Map(m.byType.map((r) => [r.type, r.count]));
-      return {
-        artistId: a.artistId,
-        artistName: a.artistName,
-        steps: [
-          { label: "搜索", count: mMap.get("search") ?? 0 },
-          { label: "艺人页浏览", count: mMap.get("artist_view") ?? 0 },
-          { label: "歌曲页浏览", count: mMap.get("track_view") ?? 0 },
-          { label: "跳转Spotify", count: mMap.get("track_open") ?? 0 },
-        ],
-      };
-    })
-  );
-
   // Total events for share calculation in list
   const totalEvents = allTypesMetrics.byType.reduce((sum, r) => sum + r.count, 0);
 
@@ -146,19 +128,7 @@ export default async function AdminPage({ searchParams }: Props) {
       )}
 
       {/* Per-artist funnels */}
-      {perArtistFunnels.length > 0 && (
-        <section className="space-y-4">
-          <p className="text-sm uppercase tracking-[0.3em] text-slate-400">按艺人漏斗</p>
-          <div className="grid gap-4 md:grid-cols-2">
-            {perArtistFunnels.map((a) => (
-              <div key={a.artistId} className="glass rounded-3xl p-4">
-                <p className="mb-3 text-sm text-white">{a.artistName}</p>
-                <FunnelChart steps={a.steps} small />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      <PerArtistFunnels topArtists={metrics.topArtists} />
 
       <section className="space-y-4">
         <EventTable events={list.events} />

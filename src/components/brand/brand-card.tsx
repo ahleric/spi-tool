@@ -11,8 +11,8 @@ export async function BrandCard() {
   return (
     <div className="glass relative overflow-hidden rounded-3xl border border-emerald-500/15 bg-gradient-to-br from-neutral-950 to-neutral-900 p-8">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(29,185,84,0.22),transparent)]" />
-      <div className="relative space-y-6">
-        <div>
+      <div className="relative space-y-8">
+        <div className="text-center space-y-3">
           <p className="text-sm uppercase tracking-[0.3em] text-brand-primary">
             {title}
           </p>

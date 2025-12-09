@@ -134,13 +134,10 @@ export function SearchForm() {
       className="glass w-full rounded-2xl md:rounded-3xl border border-white/10 bg-slate-900/40 p-4 md:p-6 shadow-glow"
     >
       <div className="flex flex-col gap-3">
-        <label className="text-xs md:text-sm uppercase tracking-[0.3em] text-slate-400">
-          {t(locale, "searchLabel")}
-        </label>
         <div className="flex flex-col gap-3 md:flex-row">
           <input
             type="text"
-            className="w-full rounded-xl md:rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-base md:text-lg text-white outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/40 disabled:opacity-50"
+            className="w-full rounded-xl md:rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-base md:text-lg text-white text-center md:text-left placeholder:text-center md:placeholder:text-left outline-none transition focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/40 disabled:opacity-50"
             placeholder={t(locale, "searchPlaceholder")}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
@@ -151,7 +148,7 @@ export function SearchForm() {
             type="submit"
             disabled={isBusy}
             className={clsx(
-              "rounded-xl md:rounded-2xl px-4 md:px-6 py-3 text-base md:text-lg font-semibold transition relative overflow-hidden",
+              "rounded-xl md:rounded-2xl px-4 md:px-6 py-3 text-base md:text-lg font-semibold transition relative overflow-hidden whitespace-nowrap min-w-[120px] text-center md:text-left",
               isBusy
                 ? "cursor-not-allowed bg-slate-700 text-slate-300"
                 : "bg-brand-primary text-slate-900 shadow-glow hover:bg-brand-primary/90 hover:shadow-[0_0_45px_rgba(29,185,84,0.6)] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 animate-button-glow",
@@ -168,9 +165,16 @@ export function SearchForm() {
             {error}
           </p>
         ) : null}
-        <p className="text-xs md:text-sm text-slate-400">
-          {t(locale, "searchHint")}
-        </p>
+        {locale === "zh" ? (
+          <p className="text-xs md:text-sm text-slate-400 text-center">
+            <span className="block">支持艺术家名称、Spotify 链接、URI 或 ID</span>
+            <span className="block">若使用艺术家名称搜索，请确保与Spotify名称一致</span>
+          </p>
+        ) : (
+          <p className="text-xs md:text-sm text-slate-400">
+            {t(locale, "searchHint")}
+          </p>
+        )}
       </div>
     </form>
   );

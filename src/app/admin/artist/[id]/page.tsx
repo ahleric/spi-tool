@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -12,7 +13,7 @@ import { EventTypeBadge } from "@/components/admin/event-type-badge";
 
 type Props = { params: { id: string }; searchParams?: { page?: string; type?: string; from?: string; to?: string } };
 
-export default async function AdminArtistDetail({ params, searchParams }: Props) {
+export default async function AdminArtistDetail({ params, searchParams }: Props): Promise<JSX.Element> {
   const session = await getSession();
   if (!session) redirect(`/admin/login?redirect=/admin/artist/${params.id}`);
 

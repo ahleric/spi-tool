@@ -25,9 +25,10 @@ export default function LoginForm() {
       const data = await res.json();
       if (!res.ok || !data.ok) throw new Error(data?.error || "Login failed");
       router.replace(redirect);
+      // 不重置 loading，直到路由切换完成，避免按钮闪烁
+      return;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
-    } finally {
       setLoading(false);
     }
   };
@@ -61,4 +62,3 @@ export default function LoginForm() {
     </form>
   );
 }
-
