@@ -1,7 +1,9 @@
 import { prisma } from "@/lib/prisma";
-import { refreshSnapshotsForArtist } from "@/lib/spotify";
+import { refreshSnapshotsForArtist, refreshSnapshotsForTrack } from "@/lib/spotify";
 
 const CRON_LOCK_TTL_MS = 30 * 60 * 1000; // 30 minutes
+const TRACK_SNAPSHOT_LIMIT = 150; // cap per run to avoid rate limits
+const TRACK_EVENT_LOOKBACK_DAYS = 90;
 
 /**
  * Acquire a simple lock using EventLog to prevent concurrent cron execution
@@ -61,6 +63,9 @@ async function logCronExecution(summary: {
   success: number;
   failed: number;
   durationMs: number;
+  trackProcessed?: number;
+  trackSuccess?: number;
+  trackFailed?: number;
   error?: string;
 }) {
   try {
@@ -132,12 +137,49 @@ export async function runSnapshotCron() {
       await prisma.eventLog.deleteMany({ where: { type: "ingest_request", artistId: { in: requestedArtistIds } } }).catch(() => {/* noop */});
     }
 
+    // Process track snapshots for tracks that have been viewed recently
+    const trackWindow = new Date(Date.now() - TRACK_EVENT_LOOKBACK_DAYS * 24 * 60 * 60 * 1000);
+    const trackEvents = await prisma.eventLog.findMany({
+      where: {
+        trackId: { not: null },
+        type: { in: ["track_view", "track_open"] },
+        createdAt: { gte: trackWindow },
+      },
+      select: { trackId: true },
+      orderBy: { createdAt: "desc" },
+      take: TRACK_SNAPSHOT_LIMIT * 3, // fetch extra, we'll dedupe below
+    });
+    const trackIds = Array.from(
+      new Set(
+        trackEvents
+          .map((t) => t.trackId)
+          .filter((id): id is string => Boolean(id)),
+      ),
+    ).slice(0, TRACK_SNAPSHOT_LIMIT);
+
+    const trackResults: string[] = [];
+    const trackErrors: Array<{ trackId: string; error: string }> = [];
+
+    for (const trackId of trackIds) {
+      try {
+        await refreshSnapshotsForTrack(trackId);
+        trackResults.push(trackId);
+      } catch (err) {
+        const error = err instanceof Error ? err.message : String(err);
+        trackErrors.push({ trackId, error });
+        console.error(`Failed to process track ${trackId}:`, error);
+      }
+    }
+
     const durationMs = Date.now() - startTime;
     const summary = {
       processed: artists.length,
       success: results.length,
       failed: errors.length,
       durationMs,
+      trackProcessed: trackIds.length,
+      trackSuccess: trackResults.length,
+      trackFailed: trackErrors.length,
       error: errors.length > 0 ? `${errors.length} artists failed` : undefined,
     };
 

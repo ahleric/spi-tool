@@ -589,3 +589,12 @@ export async function refreshSnapshotsForArtist(artistId: string) {
     spi: artist.spi ?? calculateSpi(artist.popularity ?? 0),
   });
 }
+
+export async function refreshSnapshotsForTrack(trackId: string) {
+  const track = await recordTrackFromSpotify(trackId);
+  await saveSnapshot({
+    trackId: track.id,
+    spotifyPopularity: track.popularity ?? 0,
+    spi: track.spi ?? calculateSpi(track.popularity ?? 0),
+  });
+}
