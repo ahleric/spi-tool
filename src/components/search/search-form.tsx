@@ -18,19 +18,19 @@ type SearchResponse =
       name?: string;
     };
 
-export function SearchForm() {
+export function SearchForm({ initialLocale }: { initialLocale?: Locale } = {}) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [locale, setLocale] = useState<Locale>("en");
+  const [locale, setLocale] = useState<Locale>(initialLocale ?? "en");
   const topLoader = useTopLoader();
   const isBusy = loading || isPending;
 
   useEffect(() => {
-    setLocale(getLocaleClient());
-  }, []);
+    setLocale(initialLocale ?? getLocaleClient());
+  }, [initialLocale]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

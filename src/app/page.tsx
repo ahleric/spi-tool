@@ -27,7 +27,7 @@ export default async function Home() {
         )}
       </section>
 
-      <SearchForm />
+      <SearchForm initialLocale={locale} />
       
       <section className="glass w-full rounded-2xl md:rounded-3xl border border-emerald-500/15 bg-neutral-900/60 p-4 md:p-6 space-y-2 md:space-y-3">
         <div className="flex flex-col gap-3 text-left">
