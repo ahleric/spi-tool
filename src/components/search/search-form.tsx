@@ -135,11 +135,11 @@ export function SearchForm({ initialLocale }: { initialLocale?: Locale } = {}) {
     >
       <div className="relative z-10 flex flex-col gap-3">
         <div className="flex flex-col gap-3 md:flex-row">
-          <div className="input-glow-container flex-1 rounded-lg md:rounded-xl relative [--glow-radius:8px] md:[--glow-radius:12px]">
-            <div className="input-mask-bg rounded-lg md:rounded-xl">
+          <div className="input-glow-container flex-1 rounded-xl md:rounded-2xl relative [--glow-radius:12px] md:[--glow-radius:16px]">
+            <div className="input-mask-bg rounded-xl md:rounded-2xl">
               <input
                 type="text"
-                className="w-full rounded-lg md:rounded-xl border-none bg-transparent px-4 py-3 text-base md:text-lg text-white text-center md:text-left placeholder:text-center md:placeholder:text-left outline-none transition disabled:opacity-50 focus:outline-none"
+                className="w-full appearance-none rounded-xl md:rounded-2xl border-none bg-transparent px-4 py-3 text-base md:text-lg text-white text-center md:text-left placeholder:text-center md:placeholder:text-left outline-none transition disabled:opacity-50 focus:outline-none"
                 placeholder={t(locale, "searchPlaceholder")}
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
@@ -152,7 +152,7 @@ export function SearchForm({ initialLocale }: { initialLocale?: Locale } = {}) {
             type="submit"
             disabled={isBusy}
             className={clsx(
-              "inline-flex items-center justify-center gap-2 rounded-lg md:rounded-xl px-4 md:px-6 py-3 text-base md:text-lg font-semibold transition relative overflow-hidden whitespace-nowrap min-w-[120px]",
+              "inline-flex items-center justify-center gap-2 rounded-xl md:rounded-2xl px-4 md:px-6 py-3 text-base md:text-lg font-semibold transition relative overflow-hidden whitespace-nowrap min-w-[120px]",
               isBusy
                 ? "cursor-not-allowed bg-slate-700 text-slate-300"
                 : "bg-brand-primary text-slate-900 shadow-glow hover:bg-brand-primary/90 hover:shadow-[0_0_45px_rgba(29,185,84,0.6)] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 animate-button-glow",

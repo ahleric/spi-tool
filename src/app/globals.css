@@ -28,7 +28,6 @@
   position: relative;
   overflow: hidden;
   padding: 2px;
-  border-radius: inherit;
   isolation: isolate;
 }
 
@@ -58,7 +57,6 @@
 .input-mask-bg {
   position: relative;
   z-index: 1;
-  border-radius: inherit;
   background-color: #121212;
   height: 100%;
   width: 100%;
