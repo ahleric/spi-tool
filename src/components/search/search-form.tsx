@@ -152,16 +152,31 @@ export function SearchForm({ initialLocale }: { initialLocale?: Locale } = {}) {
             type="submit"
             disabled={isBusy}
             className={clsx(
-              "rounded-lg md:rounded-xl px-4 md:px-6 py-3 text-base md:text-lg font-semibold transition relative overflow-hidden whitespace-nowrap min-w-[120px] text-center md:text-left",
+              "inline-flex items-center justify-center gap-2 rounded-lg md:rounded-xl px-4 md:px-6 py-3 text-base md:text-lg font-semibold transition relative overflow-hidden whitespace-nowrap min-w-[120px]",
               isBusy
                 ? "cursor-not-allowed bg-slate-700 text-slate-300"
                 : "bg-brand-primary text-slate-900 shadow-glow hover:bg-brand-primary/90 hover:shadow-[0_0_45px_rgba(29,185,84,0.6)] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 animate-button-glow",
             )}
           >
             {isBusy && (
-              <span className="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-slate-800 border-t-transparent" />
+              <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-slate-800 border-t-transparent" />
             )}
-            {isBusy ? t(locale, "searching") : t(locale, "searchButtonText")}
+            {!isBusy && (
+              <svg
+                className="h-4 w-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="11" cy="11" r="7" />
+                <line x1="16.65" y1="16.65" x2="21" y2="21" />
+              </svg>
+            )}
+            <span>{isBusy ? t(locale, "searching") : t(locale, "searchButtonText")}</span>
           </button>
         </div>
         {error ? (

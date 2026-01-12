@@ -55,7 +55,7 @@ export const translations = {
     retry: "重试",
     
     // Home page
-    searchPlaceholder: "搜索艺术家或曲目",
+    searchPlaceholder: "输入艺术家或曲目名称",
     searchButton: "搜索",
     searching: "搜索中...",
     searchHint: "支持艺术家名称、Spotify 链接、URI 或 ID，例如：The Beatles 或 https://open.spotify.com/track/xxxxx",
@@ -94,7 +94,7 @@ export const translations = {
     title: "用数据看清艺人 & 单曲在 Spotify 上的流行指数",
     subtitle: "输入 Spotify 链接或艺人名称，查看最新流行指数和历史走势。",
     searchLabel: "搜索艺人或歌曲",
-    searchButtonText: "立即搜索",
+    searchButtonText: "搜索",
     brandTitle: "Next Stage 音乐增长",
     brandSubtitle: "我们用数据策略，帮中国独立音乐人找到第一批精准的海外听众。",
     spiIntroTitle: "一分钟读懂SPI与Spotify算法机制",
@@ -150,7 +150,7 @@ export const translations = {
     title: "See Artist & Track Popularity on Spotify",
     subtitle: "Enter a Spotify link or artist name to view current popularity scores and historical trends.",
     searchLabel: "Spotify popularity search",
-    searchButtonText: "Analyze Now",
+    searchButtonText: "Search",
     brandTitle: "Next Stage — Music Marketing",
     brandSubtitle: "We help indie artists grow on Spotify with data, ads, and creative content.",
     spiIntroTitle: "Why your Spotify SPI matters more than total streams",
