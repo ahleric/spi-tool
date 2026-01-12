@@ -23,3 +23,61 @@
     @apply bg-neutral-900/70 backdrop-blur-lg border border-emerald-500/10 shadow-2xl shadow-black/70;
   }
 }
+
+.input-glow-container {
+  position: relative;
+  overflow: hidden;
+  padding: 2px;
+  border-radius: inherit;
+  isolation: isolate;
+}
+
+.input-glow-container::before,
+.input-glow-container::after {
+  content: "";
+  position: absolute;
+  width: 250px;
+  height: 30px;
+  background: linear-gradient(to left, #ffffff 20%, transparent 100%);
+  background-repeat: no-repeat;
+  filter: blur(8px);
+  offset-path: inset(0 0 0 0 round var(--glow-radius, 10px));
+  offset-distance: 0%;
+  offset-anchor: 100% 50%;
+  z-index: 0;
+}
+
+.input-glow-container::before {
+  animation: border-walk-1 7.2s linear infinite;
+}
+
+.input-glow-container::after {
+  animation: border-walk-2 7.2s linear infinite;
+}
+
+.input-mask-bg {
+  position: relative;
+  z-index: 1;
+  border-radius: inherit;
+  background-color: #121212;
+  height: 100%;
+  width: 100%;
+}
+
+@keyframes border-walk-1 {
+  0% {
+    offset-distance: 0%;
+  }
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+@keyframes border-walk-2 {
+  0% {
+    offset-distance: 50%;
+  }
+  100% {
+    offset-distance: 150%;
+  }
+}
