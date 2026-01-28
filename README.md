@@ -5,6 +5,7 @@ Spotify Popularity Intelligence (SPI) Tool - A Next.js 14 application for tracki
 ## Features
 
 - **Artist & Track Search**: Search by artist name, track name, or Spotify links
+- **Local Suggestions**: Query suggestions are generated from local database and recent search logs (no Spotify API calls)
 - **SPI Tracking**: Monitor Spotify Popularity Index (SPI) over time with historical charts
 - **Event Logging**: Track user interactions and API usage
 - **Admin Dashboard**: View events, metrics, and analytics with filtering capabilities
