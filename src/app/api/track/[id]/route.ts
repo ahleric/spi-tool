@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getTrackDetail } from "@/lib/services/track";
 import { recordEvent } from "@/lib/services/event";
+import { getCache, setCache } from "@/lib/memory-cache";
 
 function getClientIp(request: NextRequest): string | undefined {
   const forwarded = request.headers.get("x-forwarded-for");
@@ -16,7 +17,14 @@ export async function GET(
   { params }: { params: { id: string } },
 ) {
   try {
-    const data = await getTrackDetail(params.id);
+    const cacheKey = `track:${params.id}`;
+    let data = getCache<Awaited<ReturnType<typeof getTrackDetail>>>(cacheKey);
+    if (!data) {
+      data = await getTrackDetail(params.id);
+      if (data) {
+        setCache(cacheKey, data, 90_000);
+      }
+    }
     if (!data) {
       return NextResponse.json({ message: "未找到该单曲" }, { status: 404 });
     }

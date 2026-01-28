@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { z } from "zod";
 import { getArtistDetail } from "@/lib/services/artist";
 import { recordEvent } from "@/lib/services/event";
+import { getCache, setCache } from "@/lib/memory-cache";
 
 const querySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
@@ -26,11 +27,16 @@ export async function GET(
       Object.fromEntries(request.nextUrl.searchParams.entries()),
     );
 
-    const payload = await getArtistDetail({
-      artistId: params.id,
-      page: parsedQuery.page,
-      pageSize: parsedQuery.pageSize,
-    });
+    const cacheKey = `artist:${params.id}:page=${parsedQuery.page}:size=${parsedQuery.pageSize}`;
+    let payload = getCache<Awaited<ReturnType<typeof getArtistDetail>>>(cacheKey);
+    if (!payload) {
+      payload = await getArtistDetail({
+        artistId: params.id,
+        page: parsedQuery.page,
+        pageSize: parsedQuery.pageSize,
+      });
+      setCache(cacheKey, payload, 90_000);
+    }
 
     await recordEvent({
       type: "artist_api",

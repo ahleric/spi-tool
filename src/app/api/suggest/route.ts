@@ -4,6 +4,7 @@ import { z } from "zod";
 import { suggestCatalog } from "@/lib/services/catalog";
 import { rateLimit } from "@/lib/rate-limit";
 import { env } from "@/lib/env";
+import { getCache, setCache } from "@/lib/memory-cache";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +43,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ ok: true, suggestions: [] });
     }
 
-    const suggestions = await suggestCatalog(query, 8);
+    const cacheKey = `suggest:${query.toLowerCase()}`;
+    let suggestions = getCache<Awaited<ReturnType<typeof suggestCatalog>>>(cacheKey);
+    if (!suggestions) {
+      suggestions = await suggestCatalog(query, 8);
+      setCache(cacheKey, suggestions, 45_000);
+    }
     return NextResponse.json({ ok: true, suggestions });
   } catch (error) {
     console.error("Suggest API error:", error);
