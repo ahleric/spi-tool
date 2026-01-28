@@ -67,7 +67,8 @@ export const translations = {
     suggestRecent: "最近搜索",
     suggestExamples: "推荐示例",
     suggestPopular: "热门搜索",
-    suggestEmpty: "没有找到本地建议，试试更具体的关键词或粘贴 Spotify 链接。",
+    suggestSearchAction: "搜索「{query}」",
+    suggestEmpty: "暂无其他建议，点击上方即可搜索。",
     suggestHint: "开始输入即可获得本地建议",
     
     // Artist page
@@ -130,7 +131,8 @@ export const translations = {
     suggestRecent: "Recent searches",
     suggestExamples: "Examples",
     suggestPopular: "Popular searches",
-    suggestEmpty: "No local suggestions yet. Try a more specific term or paste a Spotify link.",
+    suggestSearchAction: "Search “{query}”",
+    suggestEmpty: "No other suggestions. Use the action above to search.",
     suggestHint: "Start typing to see local suggestions",
     
     // Artist page

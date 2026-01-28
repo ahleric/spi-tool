@@ -8,6 +8,7 @@ import { PageViewLogger } from "@/components/analytics/page-view-logger";
 import { getLocale } from "@/lib/i18n-server";
 import { t } from "@/lib/i18n";
 import { ArtistSyncBanner } from "@/components/artist/artist-sync-banner";
+import { RecentSearchUpdater } from "@/components/search/recent-search-updater";
 import dynamic from "next/dynamic";
 
 const SpiChart = dynamic(
@@ -89,6 +90,7 @@ export default async function ArtistPage({ params, searchParams }: Props) {
         artistId={detail.artist.id}
         artistName={detail.artist.name === "Unknown Artist" ? undefined : detail.artist.name}
       />
+      <RecentSearchUpdater type="artist" id={detail.artist.id} name={detail.artist.name} />
       <Link href="/" className="text-sm text-slate-400 hover:text-white w-fit">
         ← {t(locale, "backToHome")}
       </Link>

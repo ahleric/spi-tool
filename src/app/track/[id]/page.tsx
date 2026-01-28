@@ -6,6 +6,7 @@ import { PageViewLogger } from "@/components/analytics/page-view-logger";
 import { OpenSpotifyButton } from "@/components/analytics/open-spotify-button";
 import { getLocale } from "@/lib/i18n-server";
 import { t } from "@/lib/i18n";
+import { RecentSearchUpdater } from "@/components/search/recent-search-updater";
 import dynamic from "next/dynamic";
 
 const SpiChart = dynamic(
@@ -53,6 +54,7 @@ export default async function TrackPage({ params, searchParams }: Props) {
         artistId={detail.artist?.id}
         artistName={detail.artist?.name}
       />
+      <RecentSearchUpdater type="track" id={detail.track.id} name={detail.track.name} />
       <Link href={backHref} className="text-sm text-slate-400 hover:text-white w-fit">
         ← {backText}
       </Link>

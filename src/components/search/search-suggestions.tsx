@@ -11,7 +11,7 @@ export type SuggestionItem = {
   name: string;
   query?: string;
   subtitle?: string;
-  source?: "popular" | "match" | "recent" | "example";
+  source?: "popular" | "match" | "recent" | "example" | "action";
   count?: number;
 };
 
@@ -50,10 +50,26 @@ export function SearchSuggestions({
     recentItems.length === 0 &&
     exampleItems.length === 0;
 
+  const actionItem: SuggestionItem | null =
+    query.trim().length >= 2
+      ? {
+          type: "query",
+          name: t(locale, "suggestSearchAction", { query }),
+          query: query.trim(),
+          source: "action",
+        }
+      : null;
+
   return (
     <div className="mt-3 rounded-2xl border border-white/10 bg-neutral-950/70 p-3 md:p-4 backdrop-blur-xl">
       {showLoading ? (
         <p className="text-xs md:text-sm text-slate-400">{t(locale, "suggestLoading")}</p>
+      ) : null}
+
+      {!showLoading && actionItem ? (
+        <div className="mb-3">
+          <SuggestionList items={[actionItem]} onPick={onPick} locale={locale} />
+        </div>
       ) : null}
 
       {!showLoading && popularItems.length > 0 ? (
@@ -122,6 +138,7 @@ function SuggestionList({
           className={clsx(
             "flex w-full items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-left text-xs md:text-sm text-white transition",
             "hover:border-emerald-400/40 hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50",
+            item.source === "action" && "border-emerald-400/40 bg-emerald-500/10",
           )}
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => onPick(item)}

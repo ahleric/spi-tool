@@ -214,7 +214,11 @@ export function SearchForm({ initialLocale }: { initialLocale?: Locale } = {}) {
     if (item.type === "query") {
       const nextQuery = item.query ?? item.name;
       setQuery(nextQuery);
-      void runSearch(nextQuery, item.name);
+      if (item.source === "action") {
+        void runSearch(nextQuery);
+      } else {
+        void runSearch(nextQuery, item.name);
+      }
       return;
     }
     if (item.id) {
