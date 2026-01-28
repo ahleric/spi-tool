@@ -108,7 +108,7 @@ export function SearchForm({ initialLocale }: { initialLocale?: Locale } = {}) {
 
   const handlePickSuggestion = (item: SuggestionItem) => {
     if (item.type === "query") {
-      setQuery(item.name);
+      setQuery(item.query ?? item.name);
       setSuggestOpen(false);
       return;
     }
@@ -235,9 +235,27 @@ export function SearchForm({ initialLocale }: { initialLocale?: Locale } = {}) {
   const exampleItems: SuggestionItem[] =
     locale === "zh"
       ? [
-          { type: "query", name: "https://open.spotify.com/artist/4ntvojSPscU3PxselAEeY2?si=kGXAhEBCTgWRYVzYm-Ahjg", source: "example" },
-          { type: "query", name: "https://open.spotify.com/artist/3HXSUfI76zVZk71UMAeVfp?si=gwwMcpQ7QFa8vx6Ryh31vw", source: "example" },
-          { type: "query", name: "https://open.spotify.com/artist/3iW4UAZQOJEXLW7L3H04gm?si=S_9o3N0MTkSXqR-eEIcBEw", source: "example" },
+          {
+            type: "query",
+            name: "万能青年旅店",
+            query: "https://open.spotify.com/artist/4ntvojSPscU3PxselAEeY2?si=kGXAhEBCTgWRYVzYm-Ahjg",
+            subtitle: "Spotify 主页",
+            source: "example",
+          },
+          {
+            type: "query",
+            name: "草东没有派对",
+            query: "https://open.spotify.com/artist/3HXSUfI76zVZk71UMAeVfp?si=gwwMcpQ7QFa8vx6Ryh31vw",
+            subtitle: "Spotify 主页",
+            source: "example",
+          },
+          {
+            type: "query",
+            name: "重塑雕像的权利",
+            query: "https://open.spotify.com/artist/3iW4UAZQOJEXLW7L3H04gm?si=S_9o3N0MTkSXqR-eEIcBEw",
+            subtitle: "Spotify 主页",
+            source: "example",
+          },
         ]
       : [
           { type: "query", name: "Taylor Swift", source: "example" },
@@ -257,7 +275,7 @@ export function SearchForm({ initialLocale }: { initialLocale?: Locale } = {}) {
       className="glass w-full rounded-2xl md:rounded-3xl border border-white/10 bg-slate-900/40 p-4 md:p-6 shadow-glow"
     >
       <div className="relative z-10 flex flex-col gap-3">
-        <div className="flex flex-col gap-3 md:flex-row">
+        <div className="flex flex-col gap-3 md:flex-row md:items-start">
           <div className="flex-1">
             <div className="input-glow-container rounded-xl md:rounded-2xl relative [--glow-radius:12px] md:[--glow-radius:16px]">
               <div className="input-mask-bg rounded-xl md:rounded-2xl">
@@ -291,6 +309,7 @@ export function SearchForm({ initialLocale }: { initialLocale?: Locale } = {}) {
             disabled={isBusy}
             className={clsx(
               "inline-flex items-center justify-center gap-2 rounded-xl md:rounded-2xl px-4 md:px-6 py-3 text-base md:text-lg font-semibold transition relative overflow-hidden whitespace-nowrap min-w-[120px]",
+              "md:self-start",
               isBusy
                 ? "cursor-not-allowed bg-slate-700 text-slate-300"
                 : "bg-brand-primary text-slate-900 shadow-glow hover:bg-brand-primary/90 hover:shadow-[0_0_45px_rgba(29,185,84,0.6)] hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 animate-button-glow",

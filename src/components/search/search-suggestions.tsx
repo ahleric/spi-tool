@@ -9,6 +9,7 @@ export type SuggestionItem = {
   type: "artist" | "track" | "query";
   id?: string;
   name: string;
+  query?: string;
   subtitle?: string;
   source?: "popular" | "match" | "recent" | "example";
   count?: number;
