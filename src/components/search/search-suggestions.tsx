@@ -42,14 +42,6 @@ export function SearchSuggestions({
 
   const hasQuery = query.trim().length > 0;
   const showLoading = loading && query.trim().length >= 2;
-  const showEmpty =
-    !loading &&
-    query.trim().length >= 2 &&
-    matchItems.length === 0 &&
-    popularItems.length === 0 &&
-    recentItems.length === 0 &&
-    exampleItems.length === 0;
-
   const actionItem: SuggestionItem | null =
     query.trim().length >= 2
       ? {
@@ -94,12 +86,6 @@ export function SearchSuggestions({
         <Section title={t(locale, "suggestExamples")}>
           <SuggestionList items={exampleItems} onPick={onPick} locale={locale} />
         </Section>
-      ) : null}
-
-      {showEmpty ? (
-        <div className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs md:text-sm text-slate-300">
-          {t(locale, "suggestEmpty")}
-        </div>
       ) : null}
 
       {!hasQuery && !showLoading && matchItems.length === 0 && popularItems.length === 0 && recentItems.length === 0 && exampleItems.length === 0 ? (

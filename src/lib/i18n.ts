@@ -68,7 +68,6 @@ export const translations = {
     suggestExamples: "推荐示例",
     suggestPopular: "热门搜索",
     suggestSearchAction: "搜索「{query}」",
-    suggestEmpty: "暂无其他建议，点击上方即可搜索。",
     suggestHint: "开始输入即可获得本地建议",
     
     // Artist page
@@ -132,7 +131,6 @@ export const translations = {
     suggestExamples: "Examples",
     suggestPopular: "Popular searches",
     suggestSearchAction: "Search “{query}”",
-    suggestEmpty: "No other suggestions. Use the action above to search.",
     suggestHint: "Start typing to see local suggestions",
     
     // Artist page
