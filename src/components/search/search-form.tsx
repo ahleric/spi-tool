@@ -106,41 +106,24 @@ export function SearchForm({ initialLocale }: { initialLocale?: Locale } = {}) {
     }
   };
 
-  const handlePickSuggestion = (item: SuggestionItem) => {
-    if (item.type === "query") {
-      setQuery(item.query ?? item.name);
-      setSuggestOpen(false);
-      return;
-    }
-    if (item.id) {
-      persistRecent(item);
-      setSuggestOpen(false);
-      startTransition(() => {
-        router.push(item.type === "artist" ? `/artist/${item.id}` : `/track/${item.id}`);
-      });
-    } else {
-      setQuery(item.name);
-      setSuggestOpen(false);
-    }
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!query.trim()) {
+  const runSearch = async (input: string, recentLabel?: string) => {
+    const trimmed = input.trim();
+    if (!trimmed) {
       setError(t(locale, "searchError"));
       return;
     }
     setError(null);
     setLoading(true);
     topLoader.show();
+    setSuggestOpen(false);
 
     // Create an AbortController for timeout
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
     try {
-      console.log("[SearchForm] Starting search for:", query);
-      const response = await fetch(`/api/resolve?q=${encodeURIComponent(query)}`, {
+      console.log("[SearchForm] Starting search for:", trimmed);
+      const response = await fetch(`/api/resolve?q=${encodeURIComponent(trimmed)}`, {
         method: "GET",
         headers: { Accept: "application/json" },
         cache: "no-store",
@@ -202,7 +185,7 @@ export function SearchForm({ initialLocale }: { initialLocale?: Locale } = {}) {
       persistRecent({
         type: data.kind,
         id: data.id,
-        name: query.trim(),
+        name: recentLabel ?? trimmed,
         source: "recent",
       });
       startTransition(() => {
@@ -225,6 +208,30 @@ export function SearchForm({ initialLocale }: { initialLocale?: Locale } = {}) {
       setLoading(false);
       topLoader.hide();
     }
+  };
+
+  const handlePickSuggestion = (item: SuggestionItem) => {
+    if (item.type === "query") {
+      const nextQuery = item.query ?? item.name;
+      setQuery(nextQuery);
+      void runSearch(nextQuery, item.name);
+      return;
+    }
+    if (item.id) {
+      persistRecent(item);
+      setSuggestOpen(false);
+      startTransition(() => {
+        router.push(item.type === "artist" ? `/artist/${item.id}` : `/track/${item.id}`);
+      });
+    } else {
+      setQuery(item.name);
+      setSuggestOpen(false);
+    }
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    await runSearch(query);
   };
 
   const normalizedQuery = query.trim().toLowerCase();
