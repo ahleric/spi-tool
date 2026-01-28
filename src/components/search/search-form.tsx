@@ -235,9 +235,9 @@ export function SearchForm({ initialLocale }: { initialLocale?: Locale } = {}) {
   const exampleItems: SuggestionItem[] =
     locale === "zh"
       ? [
-          { type: "query", name: "周杰伦", source: "example" },
-          { type: "query", name: "告五人", source: "example" },
-          { type: "query", name: "https://open.spotify.com/track/7GhIk7Il098yCjg4BQjzvb", source: "example" },
+          { type: "query", name: "https://open.spotify.com/artist/4ntvojSPscU3PxselAEeY2?si=kGXAhEBCTgWRYVzYm-Ahjg", source: "example" },
+          { type: "query", name: "https://open.spotify.com/artist/3HXSUfI76zVZk71UMAeVfp?si=gwwMcpQ7QFa8vx6Ryh31vw", source: "example" },
+          { type: "query", name: "https://open.spotify.com/artist/3iW4UAZQOJEXLW7L3H04gm?si=S_9o3N0MTkSXqR-eEIcBEw", source: "example" },
         ]
       : [
           { type: "query", name: "Taylor Swift", source: "example" },
