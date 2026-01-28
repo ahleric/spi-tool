@@ -62,6 +62,13 @@ export const translations = {
     searchError: "请输入艺术家或曲目",
     searchFailed: "搜索失败，请稍后再试",
     noResults: "未找到匹配结果",
+    suggestLoading: "正在本地匹配...",
+    suggestMatches: "本地匹配",
+    suggestRecent: "最近搜索",
+    suggestExamples: "推荐示例",
+    suggestPopular: "热门搜索",
+    suggestSearchAction: "搜索「{query}」",
+    suggestHint: "开始输入即可获得本地建议",
     
     // Artist page
     artistOverview: "艺术家概览",
@@ -118,6 +125,13 @@ export const translations = {
     searchError: "Please enter an artist or track",
     searchFailed: "Search failed. Please try again.",
     noResults: "No matching results found",
+    suggestLoading: "Matching locally...",
+    suggestMatches: "Local matches",
+    suggestRecent: "Recent searches",
+    suggestExamples: "Examples",
+    suggestPopular: "Popular searches",
+    suggestSearchAction: "Search “{query}”",
+    suggestHint: "Start typing to see local suggestions",
     
     // Artist page
     artistOverview: "Artist Overview",

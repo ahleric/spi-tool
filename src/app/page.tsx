@@ -7,7 +7,9 @@ export default async function Home() {
   const locale = await getLocale();
 
   return (
-    <main className="mx-auto flex min-h-screen max-w-6xl flex-col gap-6 md:gap-10 px-4 pb-24 pt-10 md:px-8 md:py-16">
+    <main className="relative mx-auto flex min-h-screen max-w-6xl flex-col gap-6 md:gap-10 px-4 pb-24 pt-10 md:px-8 md:py-16 overflow-hidden">
+      <div className="pointer-events-none absolute -top-20 left-1/2 h-[280px] w-[680px] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_center,rgba(29,185,84,0.35),transparent_65%)] blur-3xl opacity-80" />
+      <div className="pointer-events-none absolute top-0 left-0 h-full w-full bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.08),transparent_55%)]" />
       <section className="space-y-4 md:space-y-6 text-center md:text-left">
         <p className="text-xs md:text-sm uppercase tracking-[0.4em] text-brand-primary">
           Spotify Popularity Intelligence
