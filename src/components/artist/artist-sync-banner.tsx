@@ -15,12 +15,6 @@ export function ArtistSyncBanner({ artistId, showBanner }: ArtistSyncBannerProps
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
-  if (!showBanner) {
-    return null;
-  }
-
-  const isBusy = status === "loading" || isPending;
-
   useEffect(() => {
     if (status !== "loading") {
       return;
@@ -44,6 +38,12 @@ export function ArtistSyncBanner({ artistId, showBanner }: ArtistSyncBannerProps
       clearInterval(timer);
     };
   }, [status]);
+
+  if (!showBanner) {
+    return null;
+  }
+
+  const isBusy = status === "loading" || isPending;
 
   const handleSync = async () => {
     try {
@@ -143,6 +143,5 @@ function StepLine({ active, label }: { active: boolean; label: string }) {
     </div>
   );
 }
-
 
 
