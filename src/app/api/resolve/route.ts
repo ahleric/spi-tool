@@ -15,18 +15,14 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const raw = (searchParams.get("q") || "").trim();
-    console.log("[Resolve API] Query:", raw);
     
     if (!raw) {
       return json({ ok: false, status: 400, error: "Missing query 'q'." }, { status: 400 });
     }
 
-    console.log("[Resolve API] Calling getArtistIdFromInput...");
     const lookup = await getArtistIdFromInput(raw);
-    console.log("[Resolve API] Lookup result:", lookup);
     
     if (!lookup) {
-      console.log("[Resolve API] No lookup result found");
       return json(
         { ok: false, status: 404, error: "No artist or track found for input." },
         { status: 404 },
@@ -42,7 +38,6 @@ export async function GET(req: Request) {
     }
 
     const result = { ok: true, kind: (lookup as any).type, id: (lookup as any).id };
-    console.log("[Resolve API] Returning result:", result);
     return json(result);
   } catch (err: unknown) {
     console.error("[Resolve API] Error:", err);
@@ -51,7 +46,6 @@ export async function GET(req: Request) {
     
     if (err instanceof Error) {
       message = err.message;
-      console.error("[Resolve API] Error message:", message);
       // Check if it's a rate limit error
       if (message.includes("rate limit") || message.includes("429")) {
         message = "搜索服务暂时繁忙，请稍后再试。";

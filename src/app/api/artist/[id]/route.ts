@@ -38,12 +38,14 @@ export async function GET(
       setCache(cacheKey, payload, 90_000);
     }
 
-    await recordEvent({
+    void recordEvent({
       type: "artist_api",
       artistId: params.id,
       artistName: payload.artist?.name,
       userAgent: request.headers.get("user-agent") || undefined,
       ip: getClientIp(request),
+    }).catch((err) => {
+      console.warn("artist_api event logging failed", err);
     });
 
     return NextResponse.json({ ok: true, data: payload });

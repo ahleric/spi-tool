@@ -29,7 +29,7 @@ export async function GET(
       return NextResponse.json({ message: "未找到该单曲" }, { status: 404 });
     }
 
-    await recordEvent({
+    void recordEvent({
       type: "track_api",
       trackId: params.id,
       trackName: data.track.name,
@@ -37,6 +37,8 @@ export async function GET(
       artistName: data.artist?.name,
       userAgent: request.headers.get("user-agent") || undefined,
       ip: getClientIp(request),
+    }).catch((err) => {
+      console.warn("track_api event logging failed", err);
     });
 
     return NextResponse.json({ ok: true, data });

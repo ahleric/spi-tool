@@ -498,6 +498,39 @@ export type UTrack = {
   albumName: string;
 };
 
+export async function upsertTrackFromTopTrack(track: UTrack, artistId?: string) {
+  const owningArtistId = artistId ?? track.artistId;
+  if (!owningArtistId) {
+    throw new Error("Missing artistId for top track upsert");
+  }
+
+  return prisma.track.upsert({
+    where: { id: track.id },
+    create: {
+      id: track.id,
+      name: track.name,
+      artistId: owningArtistId,
+      album: track.albumName,
+      imageUrl: track.imageUrl || null,
+      previewUrl: null,
+      spotifyUrl: `https://open.spotify.com/track/${track.id}`,
+      durationMs: track.duration_ms,
+      popularity: track.popularity,
+      spi: calculateSpi(track.popularity),
+    },
+    update: {
+      name: track.name,
+      artistId: owningArtistId,
+      album: track.albumName,
+      imageUrl: track.imageUrl || null,
+      durationMs: track.duration_ms,
+      popularity: track.popularity,
+      spi: calculateSpi(track.popularity),
+      updatedAt: new Date(),
+    },
+  });
+}
+
 export async function getArtistTopTracks(artistId: string): Promise<UTrack[]> {
   const data = await spotifyRequest<{ tracks: any[] }>(
     `/artists/${artistId}/top-tracks?market=US`
