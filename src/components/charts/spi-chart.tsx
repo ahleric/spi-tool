@@ -49,14 +49,33 @@ export function SpiChart({ points, title }: Props) {
     );
   }
 
-  const labels = points.map((point) => dayjs(point.capturedAt).format("MM/DD"));
+  const sortedPoints = [...points].sort(
+    (a, b) =>
+      new Date(a.capturedAt).getTime() - new Date(b.capturedAt).getTime(),
+  );
+  const dailyPoints: SpiPoint[] = [];
+  let lastDay: string | null = null;
+
+  for (const point of sortedPoints) {
+    const dayKey = dayjs(point.capturedAt).format("YYYY-MM-DD");
+    if (dayKey === lastDay && dailyPoints.length > 0) {
+      dailyPoints[dailyPoints.length - 1] = point;
+      continue;
+    }
+    dailyPoints.push(point);
+    lastDay = dayKey;
+  }
+
+  const labels = dailyPoints.map((point) =>
+    dayjs(point.capturedAt).format("MM/DD"),
+  );
 
   const data = {
     labels,
     datasets: [
       {
         label: locale === "zh" ? "流行指数" : "Popularity",
-        data: points.map((point) => point.spi),
+        data: dailyPoints.map((point) => point.spi),
         borderColor: "#1DB954",
         backgroundColor: "rgba(29, 185, 84, 0.16)",
         fill: true,
