@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
 
     // Rate limit event creation: 60 req/min per IP
     const ip = getClientIp(request) || "anon";
-    const rl = rateLimit(`event:post:${ip}`, 60, 60_000);
+    const rl = await rateLimit(`event:post:${ip}`, 60, 60_000);
     if (!rl.allowed) {
       return NextResponse.json({ ok: false, error: "Rate limit exceeded" }, { status: 429 });
     }
@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
 
     // Rate limit reads: 120 req/min per IP
     const ip = getClientIp(request) || "anon";
-    const rl = rateLimit(`event:get:${ip}`, 120, 60_000);
+    const rl = await rateLimit(`event:get:${ip}`, 120, 60_000);
     if (!rl.allowed) {
       return NextResponse.json({ ok: false, error: "Rate limit exceeded" }, { status: 429 });
     }

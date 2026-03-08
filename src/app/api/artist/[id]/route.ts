@@ -28,14 +28,14 @@ export async function GET(
     );
 
     const cacheKey = `artist:${params.id}:page=${parsedQuery.page}:size=${parsedQuery.pageSize}`;
-    let payload = getCache<Awaited<ReturnType<typeof getArtistDetail>>>(cacheKey);
+    let payload = await getCache<Awaited<ReturnType<typeof getArtistDetail>>>(cacheKey);
     if (!payload) {
       payload = await getArtistDetail({
         artistId: params.id,
         page: parsedQuery.page,
         pageSize: parsedQuery.pageSize,
       });
-      setCache(cacheKey, payload, 90_000);
+      await setCache(cacheKey, payload, 90_000);
     }
 
     void recordEvent({

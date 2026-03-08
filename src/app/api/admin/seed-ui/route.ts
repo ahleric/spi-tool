@@ -26,7 +26,15 @@ export async function POST(request: Request) {
   if (!items.length) return NextResponse.json({ error: "Missing inputs" }, { status: 400 });
   const snapshotNow = Boolean(body.snapshotNow);
 
-  const results: Array<{ input: string; ok: boolean; kind?: "artist" | "track"; id?: string; artistId?: string; error?: string }> = [];
+  const results: Array<{
+    input: string;
+    ok: boolean;
+    kind?: "artist" | "track";
+    id?: string;
+    artistId?: string;
+    name?: string;
+    error?: string;
+  }> = [];
 
   for (const raw of items) {
     try {
@@ -38,20 +46,40 @@ export async function POST(request: Request) {
       if (lookup.type === "artist") {
         const artist = await ensureArtistRecord(lookup.id);
         if (snapshotNow) await refreshSnapshotsForArtist(artist.id);
-        results.push({ input: raw, ok: true, kind: "artist", id: artist.id });
+        results.push({
+          input: raw,
+          ok: true,
+          kind: "artist",
+          id: artist.id,
+          name: artist.name,
+        });
       } else {
         const track = await recordTrackFromSpotify(lookup.id);
         if (track.artistId) {
           await ensureArtistRecord(track.artistId);
           if (snapshotNow) await refreshSnapshotsForArtist(track.artistId);
         }
-        results.push({ input: raw, ok: true, kind: "track", id: track.id, artistId: track.artistId ?? undefined });
+        results.push({
+          input: raw,
+          ok: true,
+          kind: "track",
+          id: track.id,
+          artistId: track.artistId ?? undefined,
+          name: track.name,
+        });
       }
     } catch (err) {
       results.push({ input: raw, ok: false, error: err instanceof Error ? err.message : String(err) });
     }
   }
 
-  const summary = { total: items.length, success: results.filter((r) => r.ok).length, failed: results.filter((r) => !r.ok).length };
+  const summary = {
+    total: items.length,
+    success: results.filter((r) => r.ok).length,
+    failed: results.filter((r) => !r.ok).length,
+    artists: results.filter((r) => r.ok && r.kind === "artist").length,
+    tracks: results.filter((r) => r.ok && r.kind === "track").length,
+    snapshotNow,
+  };
   return NextResponse.json({ ok: true, summary, results });
 }

@@ -18,11 +18,11 @@ export async function GET(
 ) {
   try {
     const cacheKey = `track:${params.id}`;
-    let data = getCache<Awaited<ReturnType<typeof getTrackDetail>>>(cacheKey);
+    let data = await getCache<Awaited<ReturnType<typeof getTrackDetail>>>(cacheKey);
     if (!data) {
       data = await getTrackDetail(params.id);
       if (data) {
-        setCache(cacheKey, data, 90_000);
+        await setCache(cacheKey, data, 90_000);
       }
     }
     if (!data) {

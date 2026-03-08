@@ -1,3 +1,5 @@
+import { getSharedJson, setSharedJson } from "@/lib/shared-kv";
+
 type CacheEntry<T> = {
   value: T;
   expiresAt: number;
@@ -7,6 +9,10 @@ const cache = new Map<string, CacheEntry<any>>();
 const MAX_CACHE_ENTRIES = 2000;
 const CLEANUP_INTERVAL_MS = 30_000;
 let lastCleanupAt = 0;
+
+function getSharedCacheKey(key: string) {
+  return `cache:v1:${key}`;
+}
 
 function cleanupExpired(now: number) {
   for (const [key, entry] of cache.entries()) {
@@ -34,22 +40,34 @@ function enforceSizeLimit() {
   }
 }
 
-export function getCache<T>(key: string): T | null {
+export async function getCache<T>(key: string): Promise<T | null> {
   const now = Date.now();
   cleanupIfNeeded(now);
 
   const entry = cache.get(key);
-  if (!entry) return null;
-  if (entry.expiresAt <= now) {
-    cache.delete(key);
+  if (entry) {
+    if (entry.expiresAt <= now) {
+      cache.delete(key);
+    } else {
+      return entry.value as T;
+    }
+  }
+
+  const sharedEntry = await getSharedJson<CacheEntry<T>>(getSharedCacheKey(key));
+  if (!sharedEntry || sharedEntry.expiresAt <= now) {
     return null;
   }
-  return entry.value as T;
+
+  cache.set(key, sharedEntry);
+  enforceSizeLimit();
+  return sharedEntry.value;
 }
 
-export function setCache<T>(key: string, value: T, ttlMs: number) {
+export async function setCache<T>(key: string, value: T, ttlMs: number) {
   const now = Date.now();
   cleanupIfNeeded(now);
-  cache.set(key, { value, expiresAt: now + ttlMs });
+  const entry = { value, expiresAt: now + ttlMs };
+  cache.set(key, entry);
   enforceSizeLimit();
+  await setSharedJson(getSharedCacheKey(key), entry, ttlMs);
 }

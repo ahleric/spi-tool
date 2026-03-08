@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getArtistIdFromInput } from "@/lib/spotify";
+import { getCache, setCache } from "@/lib/memory-cache";
 
 // This route inspects request.url and should always be dynamic
 export const dynamic = "force-dynamic";
@@ -20,7 +21,14 @@ export async function GET(req: Request) {
       return json({ ok: false, status: 400, error: "Missing query 'q'." }, { status: 400 });
     }
 
-    const lookup = await getArtistIdFromInput(raw);
+    const cacheKey = `resolve:${raw.toLowerCase()}`;
+    let lookup = await getCache<Awaited<ReturnType<typeof getArtistIdFromInput>>>(cacheKey);
+    if (!lookup) {
+      lookup = await getArtistIdFromInput(raw);
+      if (lookup) {
+        await setCache(cacheKey, lookup, 120_000);
+      }
+    }
     
     if (!lookup) {
       return json(

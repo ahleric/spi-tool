@@ -1,3 +1,5 @@
+import { incrementSharedFixedWindow } from "@/lib/shared-kv";
+
 type Counter = {
   count: number;
   resetAt: number;
@@ -34,7 +36,7 @@ function enforceSizeLimit() {
   }
 }
 
-export function rateLimit(key: string, limit: number, windowMs: number) {
+function rateLimitLocal(key: string, limit: number, windowMs: number) {
   const now = Date.now();
   cleanupIfNeeded(now);
 
@@ -50,4 +52,13 @@ export function rateLimit(key: string, limit: number, windowMs: number) {
     return { allowed: true, remaining: limit - existing.count, resetAt: existing.resetAt };
   }
   return { allowed: false, remaining: 0, resetAt: existing.resetAt };
+}
+
+export async function rateLimit(key: string, limit: number, windowMs: number) {
+  const sharedResult = await incrementSharedFixedWindow(key, limit, windowMs);
+  if (sharedResult) {
+    return sharedResult;
+  }
+
+  return rateLimitLocal(key, limit, windowMs);
 }

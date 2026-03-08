@@ -25,7 +25,7 @@ function getClientIp(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const ip = getClientIp(request);
-    const rl = rateLimit(`artist-sync:${ip}`, 5, 60_000);
+    const rl = await rateLimit(`artist-sync:${ip}`, 5, 60_000);
     if (!rl.allowed) {
       return NextResponse.json({ ok: false, error: "Too many sync attempts, please retry later." }, { status: 429 });
     }
@@ -68,7 +68,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: "Failed to sync artist" }, { status: 500 });
   }
 }
-
 
 
 

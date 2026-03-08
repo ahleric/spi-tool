@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
 
     // Lightweight IP-based rate limit: 60 req/min per IP per route
     const ip = getClientIp(request) || "anon";
-    const rl = rateLimit(`search:${ip}`, 60, 60_000);
+    const rl = await rateLimit(`search:${ip}`, 60, 60_000);
     if (!rl.allowed) {
       return NextResponse.json({ ok: false, error: "Rate limit exceeded" }, { status: 429 });
     }
