@@ -4,6 +4,8 @@ const envSchema = z.object({
   DATABASE_URL: z.string().optional(),
   SPOTIFY_CLIENT_ID: z.string().optional(),
   SPOTIFY_CLIENT_SECRET: z.string().optional(),
+  UPSTASH_REDIS_REST_URL: z.string().optional(),
+  UPSTASH_REDIS_REST_TOKEN: z.string().optional(),
   ADMIN_BASIC_USER: z.string().optional(),
   ADMIN_BASIC_PASS: z.string().optional(),
   ADMIN_BASIC_REALM: z.string().optional(),
@@ -19,6 +21,8 @@ export const env = envSchema.parse({
   DATABASE_URL: process.env.DATABASE_URL,
   SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID,
   SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET,
+  UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
+  UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
   ADMIN_BASIC_USER: process.env.ADMIN_BASIC_USER,
   ADMIN_BASIC_PASS: process.env.ADMIN_BASIC_PASS,
   ADMIN_BASIC_REALM:

@@ -122,7 +122,6 @@ export function SearchForm({ initialLocale }: { initialLocale?: Locale } = {}) {
     const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
     try {
-      console.log("[SearchForm] Starting search for:", trimmed);
       const response = await fetch(`/api/resolve?q=${encodeURIComponent(trimmed)}`, {
         method: "GET",
         headers: { Accept: "application/json" },
@@ -131,7 +130,6 @@ export function SearchForm({ initialLocale }: { initialLocale?: Locale } = {}) {
       });
 
       clearTimeout(timeoutId);
-      console.log("[SearchForm] Response status:", response.status, response.ok);
 
       const contentType = response.headers.get("content-type") || "";
       if (!contentType.includes("application/json")) {
@@ -141,7 +139,6 @@ export function SearchForm({ initialLocale }: { initialLocale?: Locale } = {}) {
       }
 
       const data = await response.json();
-      console.log("[SearchForm] Response data:", data);
 
       if (!response.ok || !data?.ok) {
         // Provide user-friendly error messages
@@ -171,8 +168,6 @@ export function SearchForm({ initialLocale }: { initialLocale?: Locale } = {}) {
         console.error("[SearchForm] Unknown kind:", data.kind);
         throw new Error(t(locale, "noResults"));
       }
-
-      console.log("[SearchForm] Navigating to:", destination);
       
       // Clear loading state immediately before navigation
       // This ensures UI doesn't stay in "searching" state even if page takes time to load

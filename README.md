@@ -48,6 +48,10 @@ DATABASE_URL="postgresql://user:password@host:port/database"
 SPOTIFY_CLIENT_ID="your_spotify_client_id"
 SPOTIFY_CLIENT_SECRET="your_spotify_client_secret"
 
+# Optional shared cache / rate limit storage (recommended before campaigns or events)
+UPSTASH_REDIS_REST_URL="https://your-upstash-instance.upstash.io"
+UPSTASH_REDIS_REST_TOKEN="your_upstash_rest_token"
+
 # Admin Authentication
 # Console uses DB-backed session auth. Seed the initial owner via env:
 ADMIN_OWNER_EMAIL="owner@example.com"
@@ -95,6 +99,7 @@ Open [http://localhost:3000](http://localhost:3000) to see the application.
 ### Optional
 
 - `API_REQUEST_KEY`: If set, `x-api-key` header is required for public APIs (search/event)
+- `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`: Enable shared cache and rate limiting across all instances
 - `CRON_SECRET`: Secret key for protecting `/api/cron/snapshot` endpoint
 - `NEXT_PUBLIC_BRAND_*`: Brand information displayed on the homepage
 - `SESSION_SECRET`: Secret used to sign admin session cookies

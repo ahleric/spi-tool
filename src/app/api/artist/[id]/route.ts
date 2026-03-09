@@ -28,22 +28,24 @@ export async function GET(
     );
 
     const cacheKey = `artist:${params.id}:page=${parsedQuery.page}:size=${parsedQuery.pageSize}`;
-    let payload = getCache<Awaited<ReturnType<typeof getArtistDetail>>>(cacheKey);
+    let payload = await getCache<Awaited<ReturnType<typeof getArtistDetail>>>(cacheKey);
     if (!payload) {
       payload = await getArtistDetail({
         artistId: params.id,
         page: parsedQuery.page,
         pageSize: parsedQuery.pageSize,
       });
-      setCache(cacheKey, payload, 90_000);
+      await setCache(cacheKey, payload, 90_000);
     }
 
-    await recordEvent({
+    void recordEvent({
       type: "artist_api",
       artistId: params.id,
       artistName: payload.artist?.name,
       userAgent: request.headers.get("user-agent") || undefined,
       ip: getClientIp(request),
+    }).catch((err) => {
+      console.warn("artist_api event logging failed", err);
     });
 
     return NextResponse.json({ ok: true, data: payload });

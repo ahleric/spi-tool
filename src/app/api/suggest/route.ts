@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     }
 
     const ip = getClientIp(request) || "anon";
-    const rl = rateLimit(`suggest:${ip}`, 120, 60_000);
+    const rl = await rateLimit(`suggest:${ip}`, 120, 60_000);
     if (!rl.allowed) {
       return NextResponse.json({ ok: false, error: "Rate limit exceeded" }, { status: 429 });
     }
@@ -44,10 +44,10 @@ export async function GET(request: NextRequest) {
     }
 
     const cacheKey = `suggest:${query.toLowerCase()}`;
-    let suggestions = getCache<Awaited<ReturnType<typeof suggestCatalog>>>(cacheKey);
+    let suggestions = await getCache<Awaited<ReturnType<typeof suggestCatalog>>>(cacheKey);
     if (!suggestions) {
       suggestions = await suggestCatalog(query, 8);
-      setCache(cacheKey, suggestions, 45_000);
+      await setCache(cacheKey, suggestions, 45_000);
     }
     return NextResponse.json({ ok: true, suggestions });
   } catch (error) {
