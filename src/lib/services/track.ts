@@ -9,6 +9,13 @@ import {
 } from "@/lib/spotify";
 import { ensureArtistRecord } from "@/lib/services/catalog";
 
+function logTrackFailure(scope: string, error: unknown, metadata?: Record<string, unknown>) {
+  console.warn(`[track-service] ${scope}`, {
+    error: error instanceof Error ? error.message : String(error),
+    ...(metadata ?? {}),
+  });
+}
+
 export async function getTrackDetail(trackId: string) {
   try {
     let track = await prisma.track.findUnique({
@@ -31,7 +38,13 @@ export async function getTrackDetail(trackId: string) {
     // Parallel: ensure artist exists and fetch snapshots (optimize for speed)
     const snapshotsPromise = getPopularitySnapshotsForTrack(trackId, 120);
     const artistPromise = track.artistId
-      ? ensureArtistRecord(track.artistId).catch(() => null)
+      ? ensureArtistRecord(track.artistId).catch((err) => {
+          logTrackFailure("ensure_artist_record_failed", err, {
+            trackId,
+            artistId: track?.artistId,
+          });
+          return null;
+        })
       : Promise.resolve(null);
 
     const [_, snapshots] = await Promise.all([artistPromise, snapshotsPromise]);
@@ -43,8 +56,8 @@ export async function getTrackDetail(trackId: string) {
         trackId: track.id,
         spotifyPopularity: track.popularity,
         spi: track.spi ?? calculateSpi(track.popularity),
-      }).catch(() => {
-        // Silently fail
+      }).catch((err) => {
+        logTrackFailure("seed_initial_track_snapshot_failed", err, { trackId });
       });
     }
 

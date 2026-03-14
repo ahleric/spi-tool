@@ -39,8 +39,15 @@ function base64url(input: Buffer | string) {
   return b.toString("base64").replace(/=+$/g, "").replace(/\+/g, "-").replace(/\//g, "_");
 }
 
+function getSessionSecret() {
+  if (!env.SESSION_SECRET) {
+    throw new Error("Missing required environment variable: SESSION_SECRET");
+  }
+  return env.SESSION_SECRET;
+}
+
 function sign(payload: TokenPayload) {
-  const secret = env.SESSION_SECRET || "dev-secret";
+  const secret = getSessionSecret();
   const body = base64url(Buffer.from(JSON.stringify(payload)));
   const sig = createHmac("sha256", secret).update(body).digest();
   return `${body}.${base64url(sig)}`;
@@ -49,7 +56,7 @@ function sign(payload: TokenPayload) {
 function verifyInternal(token: string): TokenPayload | null {
   const [bodyB64, sigB64] = token.split(".");
   if (!bodyB64 || !sigB64) return null;
-  const secret = env.SESSION_SECRET || "dev-secret";
+  const secret = getSessionSecret();
   const expected = createHmac("sha256", secret)
     .update(bodyB64)
     .digest();

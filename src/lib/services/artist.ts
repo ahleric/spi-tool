@@ -16,6 +16,13 @@ const artistSyncCooldown = new Map<string, number>();
 const trackSyncCooldown = new Map<string, number>();
 const SYNC_COOLDOWN_MS = 5 * 60 * 1000;
 
+function logBackgroundFailure(scope: string, error: unknown, metadata?: Record<string, unknown>) {
+  console.warn(`[artist-service] ${scope}`, {
+    error: error instanceof Error ? error.message : String(error),
+    ...(metadata ?? {}),
+  });
+}
+
 export async function getArtistDetail(params: {
   artistId: string;
   page?: number;
@@ -53,7 +60,10 @@ export async function getArtistDetail(params: {
       where: { artistId },
       take: 10,
       orderBy: { popularity: "desc" },
-    }).catch(() => []);
+    }).catch((err) => {
+      logBackgroundFailure("load_cached_tracks_failed", err, { artistId });
+      return [];
+    });
     
     // Increase cache time to 6 hours for production (reduces API calls significantly)
     const CACHE_DURATION_MS = 6 * 60 * 60 * 1000; // 6 hours
@@ -116,14 +126,15 @@ export async function getArtistDetail(params: {
         .then((spotifyArtist) => {
           const imageUrl = topImage(spotifyArtist.images);
           if (imageUrl) {
-            prisma.artist.update({
+            return prisma.artist.update({
               where: { id: artistId },
               data: { imageUrl },
             });
           }
+          return null;
         })
-        .catch(() => {
-          // Silently fail, don't block the page
+        .catch((err) => {
+          logBackgroundFailure("refresh_artist_image_failed", err, { artistId });
         });
     }
 
@@ -132,12 +143,15 @@ export async function getArtistDetail(params: {
     if (artistStored && shouldRefreshTracks && topTracks.length > 0) {
       Promise.all(
         topTracks.map((track) =>
-          recordTrackFromSpotify(track.id, artistId).catch(() => {
-            // Silently fail for individual tracks
+          recordTrackFromSpotify(track.id, artistId).catch((err) => {
+            logBackgroundFailure("persist_top_track_failed", err, {
+              artistId,
+              trackId: track.id,
+            });
           }),
         )
-      ).catch(() => {
-        // Silently fail
+      ).catch((err) => {
+        logBackgroundFailure("persist_top_tracks_batch_failed", err, { artistId });
       });
     }
 
@@ -151,7 +165,9 @@ export async function getArtistDetail(params: {
     if (artistStored && wasCreated) {
       prisma.eventLog
         .create({ data: { type: "ingest_request", artistId, input: "auto_first_view" } })
-        .catch(() => {/* noop */});
+        .catch((err) => {
+          logBackgroundFailure("enqueue_ingest_request_failed", err, { artistId });
+        });
     }
 
     // If no snapshots exist, create one from current popularity
@@ -167,8 +183,8 @@ export async function getArtistDetail(params: {
         artistId: ensuredArtist.id,
         spotifyPopularity: ensuredArtist.popularity,
         spi: ensuredArtist.spi ?? calculateSpi(ensuredArtist.popularity),
-      }).catch(() => {
-        // Silently fail
+      }).catch((err) => {
+        logBackgroundFailure("seed_initial_artist_snapshot_failed", err, { artistId });
       });
     }
 
@@ -306,8 +322,11 @@ function scheduleTopTracksSync(artistId: string) {
       const tracks = await getArtistTopTracks(artistId);
       await Promise.all(
         tracks.map((track) =>
-          recordTrackFromSpotify(track.id, artistId).catch(() => {
-            // noop
+          recordTrackFromSpotify(track.id, artistId).catch((err) => {
+            logBackgroundFailure("background_track_sync_failed", err, {
+              artistId,
+              trackId: track.id,
+            });
           }),
         ),
       );

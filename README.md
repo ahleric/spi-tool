@@ -102,7 +102,7 @@ Open [http://localhost:3000](http://localhost:3000) to see the application.
 - `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`: Enable shared cache and rate limiting across all instances
 - `CRON_SECRET`: Secret key for protecting `/api/cron/snapshot` endpoint
 - `NEXT_PUBLIC_BRAND_*`: Brand information displayed on the homepage
-- `SESSION_SECRET`: Secret used to sign admin session cookies
+- `SESSION_SECRET`: Required secret used to sign admin session cookies
 - `ADMIN_OWNER_EMAIL`, `ADMIN_OWNER_PASSWORD`, `ADMIN_OWNER_NAME`: Seed the initial owner account for the admin console
 
 ## Setting Up CRON Jobs
@@ -142,6 +142,10 @@ The snapshot endpoint will:
 2. Fetch remaining artists from the database
 3. Refresh their popularity and ingest full track lists
 4. Create snapshots and update the database
+
+Cron auth note:
+- `/api/cron/snapshot` now accepts the secret only from `X-Cron-Key` or `Authorization: Bearer ...`
+- Do not pass cron secrets in the URL query string
 
 ## Project Structure
 
@@ -187,6 +191,7 @@ src/
 ## Building for Production
 
 ```bash
+npx prisma migrate deploy
 npm run build
 npm start
 ```
