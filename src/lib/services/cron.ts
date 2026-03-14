@@ -134,7 +134,11 @@ export async function runSnapshotCron() {
 
     // Cleanup processed ingest requests
     if (requestedArtistIds.length) {
-      await prisma.eventLog.deleteMany({ where: { type: "ingest_request", artistId: { in: requestedArtistIds } } }).catch(() => {/* noop */});
+      await prisma.eventLog.deleteMany({
+        where: { type: "ingest_request", artistId: { in: requestedArtistIds } },
+      }).catch((err) => {
+        console.warn("Failed to cleanup ingest requests:", err);
+      });
     }
 
     // Process track snapshots for tracks that have been viewed recently

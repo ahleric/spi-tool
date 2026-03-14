@@ -46,9 +46,11 @@ model ArtistPopularitySnapshot {
   artistId   String
   popularity Int
   takenAt    DateTime @default(now())
+  snapshotDay DateTime
   artist     Artist   @relation(fields: [artistId], references: [id])
 
-  // Application-layer deduplication handles same-day snapshots
+  // Database-layer uniqueness prevents duplicate same-day snapshots under concurrency.
+  @@unique([artistId, snapshotDay])
   @@index([artistId, takenAt])
 }
 
@@ -57,9 +59,11 @@ model TrackPopularitySnapshot {
   trackId    String
   popularity Int
   takenAt    DateTime @default(now())
+  snapshotDay DateTime
   track      Track    @relation(fields: [trackId], references: [id])
 
-  // Application-layer deduplication handles same-day snapshots
+  // Database-layer uniqueness prevents duplicate same-day snapshots under concurrency.
+  @@unique([trackId, snapshotDay])
   @@index([trackId, takenAt])
 }
 

@@ -1,4 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
+import { randomUUID } from "crypto";
 import { prisma } from "@/lib/prisma";
 
 const SPOTIFY_ACCOUNTS_URL = "https://accounts.spotify.com/api/token";
@@ -57,6 +58,37 @@ const ensureEnv = (key: string) => {
   }
   return value;
 };
+
+function normalizeLookupInput(input: string) {
+  return input.trim().replace(/\s+/g, " ");
+}
+
+async function findLocalExactLookup(
+  input: string,
+): Promise<SpotifyLookupResult | null> {
+  const normalized = normalizeLookupInput(input);
+  if (normalized.length < 2) {
+    return null;
+  }
+
+  const localArtist = await prisma.artist.findFirst({
+    where: { name: { equals: normalized, mode: "insensitive" } },
+    select: { id: true },
+  });
+  if (localArtist) {
+    return { type: "artist", id: localArtist.id };
+  }
+
+  const localTrack = await prisma.track.findFirst({
+    where: { name: { equals: normalized, mode: "insensitive" } },
+    select: { id: true },
+  });
+  if (localTrack) {
+    return { type: "track", id: localTrack.id };
+  }
+
+  return null;
+}
 
 export async function getSpotifyAppToken(forceRefresh = false) {
   if (!forceRefresh && tokenCache && tokenCache.expiresAt > Date.now()) {
@@ -219,7 +251,7 @@ export async function getTrackById(trackId: string) {
 export async function getArtistIdFromInput(
   input: string,
 ): Promise<SpotifyLookupResult | null> {
-  const trimmed = input.trim();
+  const trimmed = normalizeLookupInput(input);
   const urlMatch = trimmed.match(spotifyUrlPattern);
   if (urlMatch?.groups) {
     const type = urlMatch.groups.type as "artist" | "track";
@@ -242,23 +274,9 @@ export async function getArtistIdFromInput(
 
   // Fast local DB lookup by name first (avoids remote calls when rate-limited)
   try {
-    if (trimmed.length >= 2) {
-      const localArtist = await prisma.artist.findFirst({
-        where: { name: { contains: trimmed, mode: "insensitive" } },
-        select: { id: true },
-      });
-      if (localArtist) {
-        return { type: "artist", id: localArtist.id };
-      }
-      
-      // Also check tracks in local DB
-      const localTrack = await prisma.track.findFirst({
-        where: { name: { contains: trimmed, mode: "insensitive" } },
-        select: { id: true, artistId: true },
-      });
-      if (localTrack) {
-        return { type: "track", id: localTrack.id };
-      }
+    const localMatch = await findLocalExactLookup(trimmed);
+    if (localMatch) {
+      return localMatch;
     }
   } catch {}
 
@@ -297,22 +315,9 @@ export async function getArtistIdFromInput(
     if (isRateLimitError || axios.isAxiosError(err)) {
       try {
         // Try to find in local database as fallback
-        const foundArtists = await prisma.artist.findMany({
-          where: { name: { contains: trimmed, mode: "insensitive" } },
-          take: 1,
-          select: { id: true },
-        });
-        if (foundArtists[0]) {
-          return { type: "artist", id: foundArtists[0].id };
-        }
-        
-        const foundTracks = await prisma.track.findMany({
-          where: { name: { contains: trimmed, mode: "insensitive" } },
-          take: 1,
-          select: { id: true },
-        });
-        if (foundTracks[0]) {
-          return { type: "track", id: foundTracks[0].id };
+        const localMatch = await findLocalExactLookup(trimmed);
+        if (localMatch) {
+          return localMatch;
         }
       } catch (dbErr) {
         // If DB lookup also fails, continue to return null
@@ -420,55 +425,53 @@ export async function saveSnapshot(params: {
   spotifyPopularity: number;
   spi: number;
 }) {
-  // De-dupe to at most one snapshot per entity per UTC day (application-layer)
   const now = new Date();
-  const startOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0));
-  const endOfDay = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999));
+  const snapshotDay = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0),
+  );
 
   if (params.artistId) {
-    const existing = await prisma.artistPopularitySnapshot.findFirst({
-      where: {
-        artistId: params.artistId,
-        takenAt: { gte: startOfDay, lte: endOfDay },
-      },
-      orderBy: { takenAt: "desc" },
-      select: { id: true },
-    });
-    if (existing) {
-      await prisma.artistPopularitySnapshot.update({
-        where: { id: existing.id },
-        data: { popularity: params.spotifyPopularity },
-      });
-    } else {
-      await prisma.artistPopularitySnapshot.create({
-        data: {
-          artistId: params.artistId,
-          popularity: params.spotifyPopularity,
-        },
-      });
-    }
+    await prisma.$executeRaw`
+      INSERT INTO "ArtistPopularitySnapshot" (
+        "id",
+        "artistId",
+        "popularity",
+        "takenAt",
+        "snapshotDay"
+      )
+      VALUES (
+        ${randomUUID()},
+        ${params.artistId},
+        ${params.spotifyPopularity},
+        ${now},
+        ${snapshotDay}
+      )
+      ON CONFLICT ("artistId", "snapshotDay")
+      DO UPDATE SET
+        "popularity" = EXCLUDED."popularity",
+        "takenAt" = EXCLUDED."takenAt"
+    `;
   } else if (params.trackId) {
-    const existing = await prisma.trackPopularitySnapshot.findFirst({
-      where: {
-        trackId: params.trackId,
-        takenAt: { gte: startOfDay, lte: endOfDay },
-      },
-      orderBy: { takenAt: "desc" },
-      select: { id: true },
-    });
-    if (existing) {
-      await prisma.trackPopularitySnapshot.update({
-        where: { id: existing.id },
-        data: { popularity: params.spotifyPopularity },
-      });
-    } else {
-      await prisma.trackPopularitySnapshot.create({
-        data: {
-          trackId: params.trackId,
-          popularity: params.spotifyPopularity,
-        },
-      });
-    }
+    await prisma.$executeRaw`
+      INSERT INTO "TrackPopularitySnapshot" (
+        "id",
+        "trackId",
+        "popularity",
+        "takenAt",
+        "snapshotDay"
+      )
+      VALUES (
+        ${randomUUID()},
+        ${params.trackId},
+        ${params.spotifyPopularity},
+        ${now},
+        ${snapshotDay}
+      )
+      ON CONFLICT ("trackId", "snapshotDay")
+      DO UPDATE SET
+        "popularity" = EXCLUDED."popularity",
+        "takenAt" = EXCLUDED."takenAt"
+    `;
   } else {
     throw new Error("Either artistId or trackId is required.");
   }
