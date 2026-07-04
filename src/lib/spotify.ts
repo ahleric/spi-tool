@@ -32,9 +32,32 @@ type SpotifyTrack = {
   popularity: number;
   preview_url: string | null;
   duration_ms: number;
+  explicit?: boolean;
   external_urls?: { spotify?: string };
-  album: { name: string; images: { url: string; width?: number; height?: number }[] };
+  album: {
+    id?: string;
+    name: string;
+    album_type?: string;
+    release_date?: string;
+    images: { url: string; width?: number; height?: number }[];
+  };
   artists: { id: string; name: string }[];
+};
+
+type SpotifyAlbum = {
+  id: string;
+  label?: string;
+  album_type?: string;
+  release_date?: string;
+  copyrights?: { text: string; type: string }[];
+};
+
+export type TrackMeta = {
+  explicit: boolean | null;
+  releaseDate: string | null;
+  albumType: string | null;
+  label: string | null;
+  copyright: string | null;
 };
 
 type SpotifySearchResponse = {
@@ -246,6 +269,60 @@ export async function getArtistById(artistId: string) {
 export async function getTrackById(trackId: string) {
   const data = await spotifyRequest<SpotifyTrack>(`/tracks/${trackId}`);
   return data;
+}
+
+export async function getAlbumById(albumId: string) {
+  return spotifyRequest<SpotifyAlbum>(`/albums/${albumId}`);
+}
+
+// Batch fetch (rate-limit friendly): Spotify allows up to 50 tracks / 20 albums per request.
+export async function getTracksByIds(ids: string[]): Promise<SpotifyTrack[]> {
+  const out: SpotifyTrack[] = [];
+  for (let i = 0; i < ids.length; i += 50) {
+    const chunk = ids.slice(i, i + 50);
+    const data = await spotifyRequest<{ tracks: (SpotifyTrack | null)[] }>(
+      `/tracks?ids=${chunk.join(",")}`,
+    );
+    for (const track of data.tracks ?? []) {
+      if (track) out.push(track);
+    }
+  }
+  return out;
+}
+
+export async function getAlbumsByIds(ids: string[]): Promise<SpotifyAlbum[]> {
+  const out: SpotifyAlbum[] = [];
+  for (let i = 0; i < ids.length; i += 20) {
+    const chunk = ids.slice(i, i + 20);
+    const data = await spotifyRequest<{ albums: (SpotifyAlbum | null)[] }>(
+      `/albums?ids=${chunk.join(",")}`,
+    );
+    for (const album of data.albums ?? []) {
+      if (album) out.push(album);
+    }
+  }
+  return out;
+}
+
+function joinCopyrights(copyrights?: { text: string; type: string }[]): string | null {
+  if (!copyrights?.length) return null;
+  const text = copyrights.map((c) => c.text).filter(Boolean).join("\n");
+  return text || null;
+}
+
+// Shared field mapping so the on-view path and the drip backfill stay consistent.
+// release_date / album_type come free from the track object; label / copyright need the album.
+export function mapTrackMeta(
+  track: SpotifyTrack,
+  album?: SpotifyAlbum | null,
+): TrackMeta {
+  return {
+    explicit: track.explicit ?? null,
+    releaseDate: track.album?.release_date ?? album?.release_date ?? null,
+    albumType: track.album?.album_type ?? album?.album_type ?? null,
+    label: album?.label ?? null,
+    copyright: joinCopyrights(album?.copyrights),
+  };
 }
 
 export async function getArtistIdFromInput(
@@ -588,6 +665,14 @@ export async function recordTrackFromSpotify(trackId: string, artistId?: string)
   const owningArtistId = artistId ?? track.artists?.[0]?.id;
   const imageUrl = topImage(track.album?.images);
 
+  // Single-track, user-triggered path: one extra album request is safe (no burst).
+  // Bulk paths (top-tracks) skip this and let the drip backfill fill label/copyright.
+  const album = track.album?.id
+    ? await getAlbumById(track.album.id).catch(() => null)
+    : null;
+  const meta = mapTrackMeta(track, album);
+  const now = new Date();
+
   return prisma.track.upsert({
     where: { id: track.id },
     create: {
@@ -601,6 +686,12 @@ export async function recordTrackFromSpotify(trackId: string, artistId?: string)
       durationMs: track.duration_ms,
       popularity: track.popularity,
       spi: calculateSpi(track.popularity),
+      explicit: meta.explicit,
+      releaseDate: meta.releaseDate,
+      albumType: meta.albumType,
+      label: meta.label,
+      copyright: meta.copyright,
+      metaSyncedAt: now,
     },
     update: {
       name: track.name,
@@ -612,7 +703,13 @@ export async function recordTrackFromSpotify(trackId: string, artistId?: string)
       durationMs: track.duration_ms,
       popularity: track.popularity,
       spi: calculateSpi(track.popularity),
-      updatedAt: new Date(),
+      explicit: meta.explicit,
+      releaseDate: meta.releaseDate,
+      albumType: meta.albumType,
+      label: meta.label,
+      copyright: meta.copyright,
+      metaSyncedAt: now,
+      updatedAt: now,
     },
   });
 }

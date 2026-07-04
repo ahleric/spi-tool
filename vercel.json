@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/snapshot",
       "schedule": "0 16 * * *"
+    },
+    {
+      "path": "/api/cron/backfill?batchSize=200",
+      "schedule": "0 18 * * *"
     }
   ]
 }

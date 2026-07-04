@@ -33,6 +33,12 @@ model Track {
   previewUrl String?
   spotifyUrl String?
   durationMs Int?
+  explicit     Boolean?
+  releaseDate  String?   // Spotify release_date string, keeps precision (2025 / 2025-10 / 2025-10-03)
+  albumType    String?   // album | single | compilation
+  label        String?   // record label (from album)
+  copyright    String?   // © / ℗ lines joined by newline (from album)
+  metaSyncedAt DateTime? // null = not yet backfilled; drip backfill selects & resumes on this
   createdAt  DateTime                  @default(now())
   updatedAt  DateTime                  @updatedAt
   snapshots  TrackPopularitySnapshot[]
