@@ -88,6 +88,12 @@ export const translations = {
     // Chart
     spiTrend: "流行指数走势",
     noHistoryData: "暂无历史数据。历史数据正在收集中，请稍后查看或尝试手动同步。",
+    noDataInRange: "所选时间范围内暂无数据。",
+    range7d: "近 7 天",
+    range28d: "近 28 天",
+    rangeCustom: "自定义",
+    rangeStart: "开始",
+    rangeEnd: "结束",
     
     // Metrics
     followers: "关注者",
@@ -156,6 +162,12 @@ export const translations = {
     // Chart
     spiTrend: "Popularity Trend",
     noHistoryData: "No historical data yet. We're still collecting it — please check back later or try manual sync.",
+    noDataInRange: "No data in the selected date range.",
+    range7d: "7 Days",
+    range28d: "28 Days",
+    rangeCustom: "Custom",
+    rangeStart: "Start",
+    rangeEnd: "End",
     
     // Metrics
     followers: "Followers",
