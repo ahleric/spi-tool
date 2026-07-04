@@ -8,6 +8,27 @@ import { getLocale } from "@/lib/i18n-server";
 import { t } from "@/lib/i18n";
 import { RecentSearchUpdater } from "@/components/search/recent-search-updater";
 import dynamic from "next/dynamic";
+import dayjs from "dayjs";
+
+function formatReleaseDate(raw: string, locale: "zh" | "en"): string {
+  // Full date -> localized; partial precision (year / year-month) -> shown as-is.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+    return locale === "zh"
+      ? dayjs(raw).format("YYYY年M月D日")
+      : dayjs(raw).format("MMM D, YYYY");
+  }
+  return raw;
+}
+
+function albumTypeText(type: string, locale: "zh" | "en"): string {
+  const key =
+    type === "single"
+      ? ("albumTypeSingle" as const)
+      : type === "compilation"
+        ? ("albumTypeCompilation" as const)
+        : ("albumTypeAlbum" as const);
+  return t(locale, key);
+}
 
 const SpiChart = dynamic(
   () =>
@@ -85,6 +106,14 @@ export default async function TrackPage({ params, searchParams }: Props) {
               </p>
               <h1 className="text-xl md:text-3xl font-display font-semibold text-white mt-1">
                 {detail.track.name}
+                {(detail.track as any).explicit ? (
+                  <span
+                    title={t(locale, "explicit")}
+                    className="ml-2 inline-flex items-center rounded border border-slate-500/70 px-1.5 text-[10px] md:text-xs font-semibold text-slate-300 align-middle"
+                  >
+                    E
+                  </span>
+                ) : null}
               </h1>
               {detail.artist ? (
                 <p className="text-xs md:text-sm text-slate-400 mt-1">
@@ -129,6 +158,42 @@ export default async function TrackPage({ params, searchParams }: Props) {
           </div>
         </div>
       </section>
+
+      {(() => {
+        const meta = detail.track as any;
+        const rows: { label: string; value: string }[] = [];
+        if (meta.releaseDate)
+          rows.push({
+            label: t(locale, "releaseDate"),
+            value: formatReleaseDate(meta.releaseDate, locale),
+          });
+        if (meta.albumType)
+          rows.push({
+            label: t(locale, "albumTypeLabel"),
+            value: albumTypeText(meta.albumType, locale),
+          });
+        if (meta.label)
+          rows.push({ label: t(locale, "trackLabel"), value: meta.label });
+        if (meta.copyright)
+          rows.push({ label: t(locale, "copyright"), value: meta.copyright });
+        if (!rows.length) return null;
+        return (
+          <section className="glass rounded-2xl md:rounded-3xl border border-white/10 bg-neutral-900/40 p-4 md:p-6">
+            <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2">
+              {rows.map((row) => (
+                <div key={row.label}>
+                  <dt className="text-xs uppercase tracking-[0.2em] text-slate-400">
+                    {row.label}
+                  </dt>
+                  <dd className="mt-1 text-sm md:text-base text-white whitespace-pre-line">
+                    {row.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        );
+      })()}
 
       <SpiChart
         points={chartPoints}

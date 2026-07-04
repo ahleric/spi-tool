@@ -84,6 +84,14 @@ export const translations = {
     album: "专辑",
     duration: "时长",
     by: "by",
+    releaseDate: "发行日期",
+    albumTypeLabel: "专辑类型",
+    trackLabel: "厂牌",
+    copyright: "版权",
+    explicit: "不适内容",
+    albumTypeAlbum: "专辑",
+    albumTypeSingle: "单曲",
+    albumTypeCompilation: "合辑",
     
     // Chart
     spiTrend: "流行指数走势",
@@ -153,6 +161,14 @@ export const translations = {
     album: "Album",
     duration: "Duration",
     by: "by",
+    releaseDate: "Release Date",
+    albumTypeLabel: "Album Type",
+    trackLabel: "Label",
+    copyright: "Copyright",
+    explicit: "Explicit",
+    albumTypeAlbum: "Album",
+    albumTypeSingle: "Single",
+    albumTypeCompilation: "Compilation",
     
     // Table
     song: "Song",

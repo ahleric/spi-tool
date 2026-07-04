@@ -6,6 +6,7 @@ import {
   getTrackById,
   saveSnapshot,
   topImage,
+  mapTrackMeta,
 } from "@/lib/spotify";
 import { ensureArtistRecord } from "@/lib/services/catalog";
 
@@ -72,8 +73,11 @@ export async function getTrackDetail(trackId: string) {
       snapshots,
     };
   } catch (err) {
-    // Graceful degradation: if DB is unavailable, fetch directly from Spotify
+    // Graceful degradation: if DB is unavailable, fetch directly from Spotify.
+    // No album lookup here (keep the fallback to a single request); label/copyright
+    // are filled once the DB is back and the track is re-ingested / backfilled.
     const t = await getTrackById(trackId);
+    const meta = mapTrackMeta(t);
     return {
       track: {
         id: t.id,
@@ -86,6 +90,11 @@ export async function getTrackDetail(trackId: string) {
         durationMs: (t as any).duration_ms ?? 0,
         popularity: t.popularity ?? 0,
         spi: calculateSpi(t.popularity ?? 0),
+        explicit: meta.explicit,
+        releaseDate: meta.releaseDate,
+        albumType: meta.albumType,
+        label: meta.label,
+        copyright: meta.copyright,
         createdAt: new Date(),
         updatedAt: new Date(),
       } as any,
